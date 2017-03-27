@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <link href="css/reset.css" rel="stylesheet" type="text/css" charset="UTF-8">
+    <script src="js/jquery-1.8.3.min.js" type="text/javascript" charset="UTF-8"></script>
+    <script src="js/jquery.banner.min.js" type="text/javascript" charset="UTF-8"></script>
+    <style>
+        #banner-body{ overflow: hidden; height: 300px; width: 400px; margin: 10% auto; border: 1px solid lightskyblue; position: relative;}
+        #banner-content{ width: 9999px;}
+        #banner-content li{ float: left; width: 400px; line-height: 300px; text-align: center;}
+        #banner-content li img{ vertical-align: middle; max-width: 100%; max-height: 100%; }
+        #banner-console{ position: absolute; bottom:10px; width: 20%; right: 0;}
+        #banner-console a{ text-indent: -9999px; float: left; width: 10px; height: 10px; background: lightsalmon; margin-left: 5px; cursor: pointer;}
+        #banner-console a.atv{ background: greenyellow;}
+        #btn-prev,#btn-next{ position: absolute; width: 40px; height: 30px; line-height: 30px; text-align: center; left: 0; top: 50%; margin-top: -15px; display: block; background: blueviolet; font-size: 10px; color: #fff; cursor: pointer;}
+        #btn-next{ right: 0; left: auto;}
+        #btn-prev:hover,#btn-next:hover{ opacity: 0.8;}
+    </style>
+</head>
+<body>
+    <div id="banner-body">
+        <ol id="banner-content">
+            <li><img src="images/1.jpg"></li>
+            <li><img src="images/2.jpg"></li>
+            <li><img src="images/3.jpg"></li>
+            <li><img src="images/4.jpg"></li>
+            <li><img src="images/5.jpg"></li>
+        </ol>
+        <div id="banner-console">
+            <a class="atv">1</a>
+            <a>2</a>
+            <a>3</a>
+            <a>4</a>
+            <a>5</a>
+        </div>
+        <a id="btn-prev">上一页</a>
+        <a id="btn-next">下一页</a>
+    </div>
+    <script>
+        $('#banner-body').SimpleBanner('#banner-body','#banner-console','#btn-prev','#btn-next','fade','3000');
+    </script>
+</body>
+</html>

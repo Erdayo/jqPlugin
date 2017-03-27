@@ -1,0 +1,8 @@
+
+body{ background: #f2f2f2;}
+.wrap{ width: 1200px; margin: 0 auto;}
+.ovf{ overflow: hidden;}
+
+img{ float: left; width: 200px; height: 200px; border: 1px solid #333;}
+
+

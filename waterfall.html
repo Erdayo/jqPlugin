@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+<style>
+    #waterfall {
+        position: relative;
+        width: 100%;
+        border: 1px solid lightgreen;
+    }
+
+    .box {
+        position: absolute;
+        width: 200px;
+        border: 1px solid #000;
+        text-align: center;
+        font-size: 20px;
+    }
+
+    .box1 {
+        height: 100px;
+    }
+
+    .box2 {
+        height: 200px;
+    }
+</style>
+
+<body>
+
+<div id="waterfall">
+    <div class="box box1"></div>
+    <div class="box box2"></div>
+    <div class="box box2"></div>
+    <div class="box box1"></div>
+    <div class="box box1"></div>
+    <div class="box box1"></div>
+    <div class="box box2"></div>
+    <div class="box box1"></div>
+    <div class="box box2"></div>
+    <div class="box box1"></div>
+    <div class="box box2"></div>
+    <div class="box box2"></div>
+    <div class="box box1"></div>
+    <div class="box box1"></div>
+    <div class="box box1"></div>
+    <div class="box box2"></div>
+    <div class="box box1"></div>
+    <div class="box box2"></div>
+</div>
+
+<script src="res/js/jquery-1.8.3.min.js"></script>
+
+<script>
+
+    $('#waterfall').children().each(function(){
+        $(this).css({
+            'height':Math.random()*300+50+'px',
+            'background': 'rgb('+Math.floor(Math.random()*255)+','+Math.floor(Math.random()*255)+','+Math.floor(Math.random()*255)+')'
+        });
+    });
+
+    $(window).resize(function () {
+        waterfall();
+    });
+    waterfall();
+    function waterfall() {
+        var wfp = $('#waterfall'),
+                wfc = $('.box'),
+                winW = $('body').width(),
+                wfcW = wfc[0].offsetWidth,
+                wfcHArr = [],
+                spacing = 10,
+                wfcLen = wfc.length,
+                wfpH,
+                margin,
+                col = [],
+                total = 0;
+
+        wfc.each(function () {
+            var h = $(this)[0].offsetHeight;
+            wfcHArr.push(h);
+            $(this).text($(this).index() + 1);
+        });
+
+        total = Math.floor((winW-spacing)/(wfcW+spacing));
+        margin = Math.floor((winW-total*(wfcW+spacing))/2)+spacing/2;
+        for ( var v = 0 ; v < total; v++) col[v] = v;
+
+        for ( var i = 0; i < wfcLen; i++)
+        {
+            var num = callBack();
+            wfc.eq(i).stop().animate({
+                'left': num*(wfcW+spacing)+margin+'px',
+                'top' : col[num]+spacing+'px'
+            },500);
+            col[num] += wfcHArr[i]+spacing;
+        }
+
+        function callBack(){
+            var num = 0;
+            for( var i = 1; i< total;i++)
+                if ( col[num] > col[i]) num = i;
+            return num;
+        }
+
+        wfpH = col[0];
+        for ( var h = 1; h < total; h++)
+            if( col[h] > wfpH ) wfpH = col[h];
+        wfp.css('height',wfpH+spacing);
+    }
+</script>
+</body>
+</html>

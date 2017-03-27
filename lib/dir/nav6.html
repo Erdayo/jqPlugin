@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../js/jquery-1.8.3.min.js" charset="UTF-8"></script>
+</head>
+<style>
+    *{ margin: 0; padding: 0;}
+    body{ min-height: 2000px;}
+    ol li,ul li{ list-style: none;}
+    h2{ text-align: center;}
+    .banner,.banner2,.banner3{ width: 400px; height: 300px; overflow: hidden; margin: 30px auto; border: 1px solid #000; position: relative;}
+    .banner ol,.banner2 ol,.banner3 ol{ width: 9999px; height: 100%;}
+    .banner li,.banner2 li,.banner3 li{ float: left; width: 400px; text-align: center; height: 100%; line-height: 300px;}
+    .banner li img,.banner2 li img,.banner3 li img{ vertical-align: middle;}
+    .banner .control,.banner2 .control,.banner3 .control{ position: absolute; right: 10px; bottom: 0; height: 20px; line-height: normal;}
+    .banner .control a,.banner2 .control a,.banner3 .control a{ display: inline-block; width: 10px; height: 10px; background: black; cursor: pointer; margin-right: 10px;}
+    .banner .control a.on,.banner .control a:hover,.banner2 .control a.on,.banner2 .control a:hover,.banner3 .control a.on,.banner3 .control a:hover{ background: lightcoral;}
+    .banner .btn_prev,.banner2 .btn_prev,.banner3 .btn_prev{ position: absolute; font-size: 40px; left: 10px; top: 50%; margin-top: -20px; cursor: pointer;}
+    .banner .btn_next,.banner2 .btn_next,.banner3 .btn_next{ position: absolute; font-size: 40px; right: 10px; top: 50%; margin-top: -20px; cursor: pointer;}
+    .banner .btn_prev:hover,.banner .btn_next:hover,.banner2 .btn_prev:hover,.banner2 .btn_next:hover,.banner3 .btn_prev:hover,.banner3 .btn_next:hover{ color: lightcoral;}
+    .bkTop,.bkTop2{ border: 1px solid #000; width: 50px; height: 50px; position: fixed; right: 10%; top: 50%; text-align: center; display: none;}
+    .bkTop2{ left: 10%; right: auto;}
+    .bkTop:hover,.bkTop2:hover{ background: #000; color: #fff;}
+    .nav{ text-align: center; margin: 20px 0;}
+    .nav a{ text-decoration: none; color: #333; margin-right: 20px;}
+    .nav a:hover,.nav a.on{ color: blue;}
+</style>
+<body>
+
+<div class="nav">
+    <a href="../nav1.html">nav1</a>
+    <a href="../nav2.html">nav2</a>
+    <a href="../nav3.html">nav3</a>
+    <a href="../nav4.html">nav4</a>
+    <a href="nav5.html">nav5</a>
+    <a href="nav6.html">nav6</a>
+</div>
+
+<h2>无缝滚动 ↓</h2>
+<div class="banner">
+    <ol>
+        <li class="on"><img src="../images/1.jpg"></li>
+        <li><img src="../images/2.jpg"></li>
+        <li><img src="../images/3.jpg"></li>
+        <li><img src="../images/4.jpg"></li>
+        <li><img src="../images/5.jpg"></li>
+    </ol>
+    <div class="control">
+        <a class="on"></a>
+        <a></a>
+        <a></a>
+        <a></a>
+        <a></a>
+    </div>
+    <a class="btn_prev"><</a>
+    <a class="btn_next">></a>
+</div>
+
+<h2>有缝滚动 ↓</h2>
+<div class="banner2">
+    <ol>
+        <li class="on"><img src="../images/1.jpg"></li>
+        <li><img src="../images/2.jpg"></li>
+        <li><img src="../images/3.jpg"></li>
+        <li><img src="../images/4.jpg"></li>
+        <li><img src="../images/5.jpg"></li>
+    </ol>
+    <div class="control">
+        <a class="on"></a>
+        <a></a>
+        <a></a>
+        <a></a>
+        <a></a>
+    </div>
+    <a class="btn_prev"><</a>
+    <a class="btn_next">></a>
+</div>
+
+<h2>淡入淡出 ↓</h2>
+<div class="banner3">
+    <ol>
+        <li class="on"><img src="../images/1.jpg"></li>
+        <li><img src="../images/2.jpg"></li>
+        <li><img src="../images/3.jpg"></li>
+        <li><img src="../images/4.jpg"></li>
+        <li><img src="../images/5.jpg"></li>
+    </ol>
+    <div class="control">
+        <a class="on"></a>
+        <a></a>
+        <a></a>
+        <a></a>
+        <a></a>
+    </div>
+    <a class="btn_prev"><</a>
+    <a class="btn_next">></a>
+</div>
+
+
+<div class="bkTop">无滚动效果</div>
+<div class="bkTop2">有滚动效果</div>
+
+
+
+<script src="../js/lib.js" charset="UTF-8"></script>
+<script src="../js/common.js" charset="UTF-8"></script>
+<script>
+    $('.nav').navSelect({
+        'grade':3     //具体判断栏目的子级
+    });
+</script>
+</body>
+</html>

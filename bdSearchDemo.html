@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit">
+    <meta name="wap-font-scale" content="no">
+    <meta name="format-detection" content="telephone=no"/>
+    <meta content="email=no" name="format-detection"/>
+    <link href="res/css/reset.css" rel="stylesheet" type="text/css">
+</head>
+<style>
+    .searchDiv {
+        width: 1200px;
+        height: 123px;
+        margin: 0 auto;
+        padding-bottom: 10px;
+        font-family: 'microsoft yahei', Simsun, Tahoma, Geneva, 'Heiti SC';
+    }
+
+    .searchDiv .fl {
+        float: left;
+    }
+
+    .searchDiv .searchL {
+        width: 115px;
+        height: 35px;
+        margin: 53px 15px 0 150px;
+    }
+
+    .searchDiv .searchM {
+        width: 605px;
+    }
+
+    .searchDiv .searchM .searchTab {
+        height: 35px;
+        line-height: 35px;
+        padding: 10px 0 5px;
+    }
+
+    .searchDiv .searchM .searchTab a {
+        margin-right: 22px;
+        text-decoration: none;
+        padding: 2px 3px;
+        color: #333;
+        font-size: 14px;
+    }
+
+    .searchDiv .searchM .searchTab a:hover {
+        color: red;
+    }
+
+    .searchDiv .searchM .searchTab a.on {
+        color: #fff;
+        background: #6cb5ff;
+        font-weight: 700;
+        border-radius: 3px;
+        position: relative;
+    }
+
+    .searchDiv .searchM .searchCon input {
+        width: 450px;
+        height: 20px;
+        line-height: 20px;
+        padding: 9px 33px 9px 15px;
+        border: 1px solid #b7b7b7;
+        font-size: 16px;
+        background: #fff;
+    }
+
+    .searchDiv .searchM .searchCon button {
+        width: 100px;
+        height: 40px;
+        line-height: 40px;
+        color: #3e3d3d;
+        text-align: center;
+        background: url("images/searchBtn.png") 0 0;
+        font-size: 14px;
+        float: right;
+        border: none;
+    }
+
+    .searchDiv .searchM .searchCon button:hover {
+        background-position: -100px 0;
+    }
+
+    .searchDiv .searchM .searchSu a {
+        font-size: 12px;
+        color: #333;
+        margin-right: 20px;
+        white-space: nowrap;
+        display: inline-block;
+        text-decoration: none;
+    }
+
+    .searchDiv .searchM .searchSu a:hover, .searchDiv .searchR a:hover {
+        color: #f03901;
+        text-decoration: underline;
+    }
+
+    .searchDiv .searchR {
+        width: 286px;
+        margin: 50px 0 0 21px;
+        height: 52px;
+        overflow: hidden;
+        display: inline;
+    }
+
+    .searchDiv .searchSu {
+        height: 24px;
+        line-height: 24px;
+        padding-top: 6px;
+        overflow: hidden;
+    }
+
+    .searchDiv .searchR a {
+        height: 26px;
+        overflow: hidden;
+        font-size: 12px;
+        display: block;
+        margin: 0 5px;
+        width: 132px;
+        float: left;
+        color: #333;
+        text-decoration: none;
+    }
+
+    .searchDiv .searchR a i {
+        display: inline-block;
+        margin-right: 5px;
+        width: 4px;
+        height: 4px;
+        background-color: #ff635f;
+        border-radius: 50%;
+    }
+
+    .bdSug_wpr {
+        top: 262px !important;
+        width: 499px !important;
+        border: 1px solid #b7b7b7 !important;
+        padding: 5px 0 !important;
+    }
+
+    .bdSug_app {
+        display: none !important;
+    }
+
+    .bdSug_wpr td {
+        height: 30px !important;
+        padding-left: 12px !important;
+        color: #333;
+        cursor: pointer !important;
+    }
+
+    .bdSug_wpr tr.bdSug_mo td {
+        background: #ededed !important;
+        color: #333 !important;
+    }
+    h1{ text-align: center; font-size: 20px; margin: 10px;}
+</style>
+<body>
+
+<h1>百度搜索提示</h1>
+
+<div class="searchDiv">
+    <div class="searchL fl">
+        <a href="http://www.baidu.com/index.php?tn=92068069_pg&ch=11"><img src="images/baidu.png" alt="百度首页"></a>
+    </div>
+    <div class="searchM fl">
+        <div class="searchTab">
+            <a href="javascript:void(0);" class="on" rel="web">网页</a>
+            <a href="javascript:void(0);" rel="bfyy">视频</a>
+            <a href="javascript:void(0);" rel="music">音乐</a>
+            <a href="javascript:void(0);" rel="image">图片</a>
+            <a href="javascript:void(0);" rel="zhidao">知道</a>
+            <a href="javascript:void(0);" rel="computer">电脑</a>
+            <a href="javascript:void(0);" rel="map">地图</a>
+            <a href="javascript:void(0);" rel="gouwu">购物</a>
+        </div>
+        <div class="searchCon">
+            <form id="searchF" action="http://www.baidu.com/baidu" method="get" target="_blank" accept-charset="UTF-8">
+                <input name="tn" type="hidden" value="SE_zzsearchcode_shhzc78w" autocomplete="off">
+                <input type="text" name="word" size="30" baiduSug="1" autocomplete="off">
+                <button type="submit">百度一下</button>
+            </form>
+        </div>
+        <div class="searchSu">
+            <ul>
+                <li>
+                    <a href="http://www.baidu.com/?tn=sitehao123_15" class="rechiItem">百度</a>
+                    <a href="http://www.sina.com.cn/" class="rechiItem">新浪</a>
+                    <a href="http://www.sohu.com/" class="rechiItem">搜狐</a>
+                    <a href="http://www.qq.com/" class="rechiItem">腾讯</a>
+                    <a href="https://www.baidu.com/s?word=%E5%A4%A9%E6%B0%94&amp;tn=91880163_hao_pg" class="rechiItem">天气</a>
+                    <a href="https://www.baidu.com/s?word=NBA&amp;tn=91880163_hao_pg" class="rechiItem">NBA</a>
+                    <a href="https://www.baidu.com/s?word=%E5%AF%8C%E5%95%86%E7%82%B9%E5%90%8D%E8%A6%81baby&amp;tn=91880163_hao_pg"
+                       class="rechiItem">富商点名要baby</a>
+                    <a href="https://www.baidu.com/s?word=%E8%B6%85%E5%BC%BA%E5%8F%B0%E9%A3%8E%E8%A2%AD%E5%87%BB%E5%B9%BF%E4%B8%9C&amp;tn=91880163_hao_pg"
+                       class="rechiItem">超强台风袭击广东</a>
+                </li>
+                <li>
+                    <a href="http://www.163.com/" class="rechiItem">网易</a>
+                    <a href="http://www.youku.com/" class="rechiItem">优酷网</a>
+                    <a href="http://www.hao123.com/link/v3/?key=pZwYTjCEQLn8mvkGmv_8IA7Emh7EQhPEUiqY5vRqUiR1wjc-nWu1FHPDyWuLwM9EiNPYUvVWRy-siLIwXhNffLK-T-ubyhN2Ih-sRhR-nbm3ph7KiAPMyN63N7b-nbFrwgIbnDP-raRzwbPZnW-GHhwMT7f-nbu8Ijwpfy9lp-wsiA42pH93UvkuihPcyZFVPvqnXj7bpduyIgugRhDzXbqCPvGVXbPznDPufbNJfhmsTbk3R-KQHWFAwD7WpzRzwbPQiYwyIbN1rA9jPv_4nyNVpRdEUyuowDGiTzRzfh9NFHPD"
+                       class="rechiItem">天猫</a><a href="http://www.ifeng.com" class="rechiItem">凤凰网</a>
+                    <a href="https://www.baidu.com/s?word=%E5%AE%8B%E5%96%86%E9%81%AD%E5%85%A8%E9%9D%A2%E5%B0%81%E6%9D%80&amp;tn=91880163_hao_pg"
+                       class="rechiItem">宋喆遭全面封杀</a>
+                    <a href="https://www.baidu.com/s?word=%E5%88%98%E5%BC%BA%E4%B8%9C%E5%8F%91%E9%A3%99&amp;tn=91880163_hao_pg"
+                       class="rechiItem">刘强东发飙</a>
+                    <a href="https://www.baidu.com/s?word=%E6%9F%AF%E9%9C%87%E4%B8%9C%E6%96%B0%E7%89%87%22%E5%90%B8%E6%AF%92%22&amp;tn=91880163_hao_pg"
+                       class="rechiItem">柯震东新片"吸毒"</a>
+                    <a href="https://www.baidu.com/s?word=%E4%B9%94%E4%BB%BB%E6%A2%81%E5%A5%B3%E5%8F%8B%E6%9B%9D%E5%85%89&amp;tn=91880163_hao_pg"
+                       class="rechiItem">乔任梁女友曝光</a>
+                </li>
+                <li>
+                    <a href="http://www.taobao.com" class="rechiItem">淘宝网</a>
+                    <a href="http://game.hao123.com/" class="rechiItem">免费游戏</a>
+                    <a href="http://www.4399.com/" class="rechiItem">4399游戏</a>
+                    <a href="http://v.hao123.com/" class="rechiItem">hao123影视</a>
+                    <a href="https://www.baidu.com/s?word=%E6%9F%B3%E5%B2%A9%E8%B0%88%E7%88%B1%E6%83%85&amp;tn=91880163_hao_pg"
+                       class="rechiItem"> 柳岩谈爱情</a>
+                    <a href="https://www.baidu.com/s?word=%E5%BE%90%E5%B3%A5%E5%A4%9A%E5%9C%B0%E7%8C%8E%E8%89%B3&amp;tn=91880163_hao_pg"
+                       class="rechiItem">徐峥多地猎艳</a>
+                    <a href="https://www.baidu.com/s?word=%E9%A9%AC%E8%93%89%E5%A6%88%E5%A6%88%E6%89%BE%E7%BE%A4%E6%BC%94&amp;tn=91880163_hao_pg"
+                       class="rechiItem">马蓉妈妈找群演</a>
+                    <a href="https://www.baidu.com/s?word=%E6%9E%97%E5%BF%97%E7%8E%B2%E9%AA%82%E5%B0%8FS%E6%9C%89%E7%97%85&amp;tn=91880163_hao_pg"
+                       class="rechiItem">林志玲骂小S有病</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="searchR fl">
+        <a href="http://mini.eastday.com/a/161020013254490.html?qid=114lakuzhan"><i></i>扒光游街成特色</a>
+        <a href="http://www.78.cn/?sid=1368"><i></i>打工不如开店</a>
+        <a href="http://news.114la.com/info_5012.html"><i></i>亿元司长被抄视频</a>
+        <a href="http://news.114la.com/info_4994.html"><i></i>航母辽宁舰生活照</a>
+    </div>
+</div>
+
+<script src="res/js/jquery-1.8.3.min.js"></script>
+<script>
+    var sDiv = $('.searchDiv'),
+            sLogo = sDiv.find('.searchL img'),
+            sTab = sDiv.find('.searchTab a'),
+            sSu = sDiv.find('.searchSu ul li'),
+            sBtn = sDiv.find('.searchM button'),
+            sForm = $('#searchF'),
+            sInput = sForm.find('input[type=text]'),
+            tipTd = $('.bdSug_wpr td'),
+            sTimer, sCount = 0, subs = 0,
+            requestSrc = 'http://unionsug.baidu.com/su?wd=',
+            sLogoArr = ['baidu', 'ser_bf', 'ser_mp3', 'ser_pic', 'ser_zhidao', 'ser_yesky', 'ser_ditu', 'ser_taobao'],
+            sActionArr = ['http://www.baidu.com/s', 'http://hz.v.baofeng.com/search/web/search.php', 'http://music.baidu.com/search', 'http://image.baidu.com/search/index', 'http://zhidao.baidu.com/q', 'http://search.yesky.com/searchproduct.do', 'http://map.baidu.com/m', 'http://ai.taobao.com/search/index.htm'],
+            sBtnArr = ['百度一下', '暴风视频', '百度一下', '百度一下', '百度一下', '搜索', '百度一下', '淘宝搜索'],
+            sLogoLink = ['http://www.baidu.com/index.php?tn=92068069_pg&ch=11', 'http://hz.v.baofeng.com/', 'http://music.baidu.com/?ie=utf-8&ct=134217728&word=&tn=91880163_hao_pg&ch=11', 'http://image.baidu.com/', 'http://zhidao.baidu.com/q?pt=ylmf_ik', 'http://product.yesky.com/', 'http://map.baidu.com/', 'http://www.taobao.com/'],
+            csdId;
+    window.baidu = new Object();
+
+    sTab.click(function () {
+        subs = $(this).index();
+        sLogo.attr('src', 'images/' + sLogoArr[subs] + '.png').parent().attr('href', sLogoLink[subs]);
+        sBtn.text(sBtnArr[subs]);
+        sForm.attr('action', sActionArr[subs]);
+        $(this).addClass('on').siblings().removeClass('on');
+    });
+
+    sInput.on('input', function () {
+        var w = $(this).val();
+        baidu.sug = function (arr) {
+            csdId.find('ol').html('');
+            if (arr.s.length != 0) {
+                csdId.show();
+                for (var i = 0; i < arr.s.length; i++) {
+                    var h;
+                    var txt = arr.s[i];
+                    if (subs == 0)
+                        h = sActionArr[subs] + '?word=' + txt + '&tn=92068069_pg';
+                    else if (subs == 1)
+                        h = sActionArr[subs] + '?keywords=' + txt;
+                    else if (subs == 2)
+                        h = sActionArr[subs] + '?fr=ps&ie=utf-8&key=' + txt;
+                    else if (subs == 3)
+                        h = sActionArr[subs] + '?word=' + txt + '&ct=201326592&cl=2&tn=baiduimage&lm=-1&ie=utf-8';
+                    else if (subs == 4)
+                        h = sActionArr[subs] + '?word=' + txt + '&tn=ikaslist&ct=17&pt=ylmf_ik';
+                    else if (subs == 5)
+                        h = sActionArr[subs] + '?wd=' + txt + '&ie=utf-8';
+                    else if (subs == 7)
+                        h = sActionArr[subs] + '?key=' + txt;
+                    var liCon = '<li><a href="' + h + '" target="_blank" title="' + arr.s[i] + '">' + arr.s[i] + '</a></li>';
+                    csdId.find('ol').append(liCon);
+                }
+            }
+            else {
+                csdId.find('ol').html('');
+                csdId.hide();
+            }
+        };
+        $.ajax({
+            url: requestSrc + w,
+            dataType: 'jsonp'
+        })
+    });
+    crateSugDiv();
+    function crateSugDiv() {
+        var l = sInput.offset().left,
+                t = sInput.offset().top + sInput.height() * 2 - 1,
+                w = sInput[0].clientWidth,
+                csd = '<div id="sugDiv" style="position: absolute; left: ' + l + 'px;top: ' + t + 'px;width: ' + w + 'px;background: #fff;z-index: 1000000;padding: 5px 0; line-height: 30px; border: 1px solid #b2b2b2; display: none;"><ol></ol></div>',
+                sl = '<style>#sugDiv li{ padding:0 12px ;} #sugDiv li a{ text-decoration: none; color: #333;display: block;}#sugDiv li.hover{ background: #ededed;}</style>';
+        $('body').append(csd, sl);
+        csdId = $('#sugDiv')
+    }
+    csdId.find('li').live('hover', function () {
+        $(this).addClass('hover').siblings().removeClass('hover');
+    });
+    csdId.find('li').live('click',function(){
+       csdId.hide();
+    });
+    $('body,html').click(function(){
+        csdId.hide();
+    });
+
+    $(window).resize(function(){
+       csdId.css({
+           left : sInput.offset().left + 'px'
+       });
+    });
+
+    sBtn.click(function () {
+        var txt = sInput.val();
+        if (subs == 0)
+            window.open(sActionArr[subs] + '?word=' + txt + '&tn=92068069_pg');
+        else if (subs == 1)
+            window.open(sActionArr[subs] + '?keywords=' + txt);
+        else if (subs == 2)
+            window.open(sActionArr[subs] + '?fr=ps&ie=utf-8&key=' + txt);
+        else if (subs == 3)
+            window.open(sActionArr[subs] + '?word=' + txt + '&ct=201326592&cl=2&tn=baiduimage&lm=-1&ie=utf-8');
+        else if (subs == 4)
+            window.open(sActionArr[subs] + '?word=' + txt + '&tn=ikaslist&ct=17&pt=ylmf_ik');
+        else if (subs == 5)
+            window.open(sActionArr[subs] + '?wd=' + txt + '&ie=utf-8');
+        else if (subs == 7)
+            window.open(sActionArr[subs] + '?key=' + txt);
+    });
+
+    sTimer = setInterval(changeSu, 5000);
+    function changeSu() {
+        sCount++;
+        showSu(sCount);
+    }
+    function showSu(sub) {
+        if (sub >= sSu.length)
+            sCount = sub = 0;
+        sSu.eq(sub).show().siblings().hide();
+    }
+    sSu.parent().hover(function () {
+        clearInterval(sTimer);
+    }, function () {
+        sTimer = setInterval(changeSu, 5000);
+    });
+
+</script>
+
+</body>
+</html>

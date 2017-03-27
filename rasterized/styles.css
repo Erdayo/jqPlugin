@@ -1,0 +1,52 @@
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {  margin: 0;  padding: 0;  font-size: 100%;  vertical-align: baseline;  border: 0;  outline: 0;  background: transparent;  }
+ol, ul {  list-style: none;  }
+blockquote, q {  quotes: none;  }
+:focus {  outline: 0;  }
+table {  border-collapse: collapse;  border-spacing: 0;  }
+a{ text-decoration: none;}
+*{-webkit-box-sizing: border-box;-moz-box-sizing: border-box;-ms-box-sizing: border-box;box-sizing: border-box;}
+.row{ display: block; overflow: auto;}
+.col-1,.col-2,.col-3,.col-4,.col-5,.col-6,.col-7,.col-8,.col-9,.col-10{ float: left;}
+.col-1{ width: 10%;}
+.col-2{ width: 20%;}
+.col-3{ width: 30%;}
+.col-4{ width: 40%;}
+.col-5{ width: 50%;}
+.col-6{ width: 60%;}
+.col-7{ width: 70%;}
+.col-8{ width: 80%;}
+.col-9{ width: 90%;}
+.col-10{ width: 100%;}
+.col-offset-1{ margin-left: 10%;}
+.col-offset-2{ margin-left: 20%;}
+.col-offset-3{ margin-left: 30%;}
+.col-offset-4{ margin-left: 40%;}
+.col-offset-5{ margin-left: 50%;}
+.col-offset-6{ margin-left: 60%;}
+.col-offset-7{ margin-left: 70%;}
+.col-offset-8{ margin-left: 80%;}
+.col-offset-9{ margin-left: 90%;}
+
+@media screen and (max-width: 768px){
+.col-sm-1,.col-sm-2,.col-sm-3,.col-sm-4,.col-sm-5,.col-sm-6,.col-sm-7,.col-sm-8,.col-sm-9,.col-sm-10{ float: left;}
+.col-sm-1{width: 10%;}
+.col-sm-2{width: 20%;}
+.col-sm-3{width: 30%;}
+.col-sm-4{width: 40%;}
+.col-sm-5{width: 50%;}
+.col-sm-6{width: 60%;}
+.col-sm-7{width: 70%;}
+.col-sm-8{width: 80%;}
+.col-sm-9{width: 90%;}
+.col-sm-10{width: 100%;}
+.col-offset-sm-1{ margin-left: 10%;}
+.col-offset-sm-2{ margin-left: 20%;}
+.col-offset-sm-3{ margin-left: 30%;}
+.col-offset-sm-4{ margin-left: 40%;}
+.col-offset-sm-5{ margin-left: 50%;}
+.col-offset-sm-6{ margin-left: 60%;}
+.col-offset-sm-7{ margin-left: 70%;}
+.col-offset-sm-8{ margin-left: 80%;}
+.col-offset-sm-9{ margin-left: 90%;}
+
+}

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rasterized</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link href="styles.css" rel="stylesheet" type="text/css">
+</head>
+<style>
+    *{ font-family: 'Consolas';}
+    div[class*='col']{height: 100px; background: #d6d6d6; border: 1px solid #f0f0f0; word-break: break-all;}
+    div[class*='col'] div[class*='col']{ background: #bcbcbc; border: 1px solid #a2a2a2; height: 100%;}
+    .container{ width: 80%; margin: 0 auto;}
+</style>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-1">col-1</div>
+        <div class="col-2">col-2</div>
+        <div class="col-3">col-3</div>
+        <div class="col-4">col-4</div>
+    </div>
+    <div class="row">
+        <div class="col-1 col-sm-9">col-1</div>
+        <div class="col-9 col-sm-1">col-9</div>
+    </div>
+
+    <div class="row">
+        <div class="col-2 col-sm-8">col-2</div>
+        <div class="col-8 col-sm-2">
+            <div class="col-5 col-sm-5">col-5</div>
+            <div class="col-5 col-sm-5">col-5</div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3 col-sm-7">
+            <div class="col-3 col-sm-5">col-3</div>
+            <div class="col-5 col-sm-5">col-5</div>
+        </div>
+        <div class="col-7 col-sm-3">col-7</div>
+    </div>
+
+    <div class="row">
+        <div class="col-4 col-sm-6">col-4</div>
+        <div class="col-6 col-sm-4">col-6</div>
+    </div>
+
+    <div class="row">
+        <div class="col-5 col-sm-5">col-5</div>
+        <div class="col-5 col-sm-5">col-5</div>
+    </div>
+
+    <div class="row">
+        <div class="col-offset-1 col-3 col-offset-sm-7"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-offset-2 col-3 col-offset-sm-6"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-offset-3 col-3 col-offset-sm-5"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-offset-4 col-3 col-offset-sm-4"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-offset-5 col-3 col-offset-sm-3"></div>
+    </div>
+
+</div>
+
+</body>
+</html>

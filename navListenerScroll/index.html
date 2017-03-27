@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="js/jquery-1.8.3.min.js"></script>
+    <style>
+        div{ width: 500px; height: 300px; border: 1px solid #000; margin: 0 auto;}
+        .nav{ position: fixed;}
+        .nav li{ list-style: none;}
+        .nav li a{ color: #000; text-decoration: none; transition: .3s linear; background: #0ff;}
+        .nav li:hover a{ color: #0f0; background: #f0f;}
+        .nav li.on a{ color: #f00; background: #ff0;}
+    </style>
+</head>
+<body>
+<ol class="nav">
+    <li><a href="#1">1</a></li>
+    <li><a href="#2">2</a></li>
+    <li><a href="#3">3</a></li>
+    <li><a href="#4">4</a></li>
+    <li><a href="#5">5</a></li>
+    <li><a href="#6">6</a></li>
+    <li><a href="#7">7</a></li>
+    <li><a href="#8">8</a></li>
+    <li><a href="#9">9</a></li>
+    <li><a href="#10">10</a></li>
+</ol>
+<div id="1">1</div>
+<div id="2">2</div>
+<div id="3">3</div>
+<div id="4">4</div>
+<div id="5">5</div>
+<div id="6">6</div>
+<div id="7">7</div>
+<div id="8">8</div>
+<div id="9">9</div>
+<div id="10">10</div>
+
+<script>
+
+    var starr =[];
+    $('div').each(function(){
+        var topVal = $(this)[0].offsetTop;
+        starr.push(topVal);
+    });
+    $(document).scroll(function(e){
+        var st = $(this).scrollTop();
+        for(var i = 1; i<starr.length;i++)
+        {
+            if(st>=starr[i-1] && st<starr[i])
+            {
+                $('.nav li').eq(i-1).addClass('on').siblings().removeClass('on');
+            }
+        }
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <link href="css/reset.css" rel="stylesheet" type="text/css" charset="UTF-8">
+    <script src="js/jquery-1.8.3.min.js" type="text/javascript" charset="UTF-8"></script>
+    <script src="js/jQuery.drag.min.js" type="text/javascript" charset="UTF-8"></script>
+</head>
+<body>
+
+<div id="test-container" style=" width: 1000px; height: 800px; border: 1px solid #000; margin: 50px auto; position: relative;">
+    <div id="drag-container" style="position: absolute; top: 50px; left: 100px; cursor: all-scroll; border: 1px solid lightskyblue; width: 500px; height: 300px; text-align: center;">
+        <img src="images/1.jpg">
+    </div>
+
+</div>
+
+<script>
+    $('#test-container').SimpleDrag('#drag-container');
+</script>
+</body>
+</html>

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    canvas, button {
+        margin: 20px;
+    }
+</style>
+<body>
+<button id="autoFind" onclick="new FindRound()">自动寻路</button>
+<br>
+<canvas id="canvas" width="600" height="600"></canvas>
+<p id="p"></p>
+<script>
+    var canvas = $('canvas'),
+            width = canvas.width,
+            maze_cells = {},
+            start_cell = {},
+            end_cell = {},
+            visitRooms = [],
+            roomsLine = [],
+            start_col,
+            start_row,
+            maze,
+            rCol = 15,
+            rRow = 15;
+    function $(str) {
+        return document.getElementById(str);
+    }
+
+    function Maze(obj, col, row) {
+        this.col = col || 10;
+        this.row = row || 10;
+        this.canvas = obj.getContext('2d');
+        this.init();
+    }
+
+    Maze.prototype = {
+        init: function () {
+            this.cell = (width - 2) / this.col;
+            for (var i = 0; i < this.row; i++) {
+                maze_cells[i] = [];
+                for (var j = 0; j < this.col; j++) {
+                    maze_cells[i].push({
+                        x: j,
+                        y: i,
+                        top: false,
+                        bottom: false,
+                        left: false,
+                        right: false,
+                        isVisited: false,
+                        g: 0,
+                        h: 0,
+                        f: 0
+                    })
+                }
+            }
+            start_cell = {x: 0, y: 0};
+            start_row = start_cell.x;
+            start_col = start_cell.y;
+            visitRooms.push(start_cell);    //记录已访问过的单元格
+            roomsLine.push(start_cell);     //记录访问路径
+            maze_cells[0][0].isVisited = true;
+            maze_cells[0][0].top = true;
+            maze_cells[this.row - 1][this.col - 1].bottom = true;
+            this.calcCells(0, 0, maze_cells);
+            this.drawCells();
+            maze_cells[0][0].top = false;
+            maze_cells[this.row - 1][this.col - 1].bottom = false;
+            this.drawRect(start_col, start_row);
+            this.bindEvent();
+        },
+        calcCells: function (x, y, arr) {
+            var neighbors = [],
+                    next;
+            if (x - 1 >= 0 && !maze_cells[x - 1][y].isVisited) {
+                neighbors.push({
+                    x: x - 1,
+                    y: y
+                })
+            }
+            if (x + 1 < this.row && !maze_cells[x + 1][y].isVisited) {
+                neighbors.push({
+                    x: x + 1,
+                    y: y
+                })
+            }
+            if (y - 1 >= 0 && !maze_cells[x][y - 1].isVisited) {
+                neighbors.push({
+                    x: x,
+                    y: y - 1
+                })
+            }
+            if (y + 1 < this.col && !maze_cells[x][y + 1].isVisited) {
+                neighbors.push({
+                    x: x,
+                    y: y + 1
+                })
+            }
+            if (neighbors.length > 0) {  //相邻的有未访问过的
+                var current = {x: x, y: y};
+                next = neighbors[Math.floor(Math.random() * neighbors.length)];
+                maze_cells[next.x][next.y].isVisited = true;
+                visitRooms.push({x: next.x, y: next.y});
+                roomsLine.push({x: next.x, y: next.y});
+                this.breakWall(current, next);
+                this.calcCells(next.x, next.y);
+            }
+            else {
+                next = roomsLine.pop();
+                if (next != null) {
+                    this.calcCells(next.x, next.y, arr);
+                }
+            }
+
+        },
+        breakWall: function (cur, next) {
+            if (cur.x < next.x) {
+                maze_cells[cur.x][cur.y].bottom = true;
+                maze_cells[next.x][next.y].top = true;
+            }
+            if (cur.x > next.x) {
+                maze_cells[cur.x][cur.y].top = true;
+                maze_cells[next.x][next.y].bottom = true;
+            }
+            if (cur.y < next.y) {
+                maze_cells[cur.x][cur.y].right = true;
+                maze_cells[next.x][next.y].left = true;
+            }
+            if (cur.y > next.y) {
+                maze_cells[cur.x][cur.y].left = true;
+                maze_cells[next.x][next.y].right = true;
+            }
+        },
+        drawCells: function () {
+            var ctx = this.canvas,
+                    w = this.cell;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.beginPath();
+            ctx.save();
+            ctx.translate(1, 1);
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 2;
+            for (var i in maze_cells) {
+                var len = maze_cells[i].length;
+                for (var j = 0; j < len; j++) {
+                    var cell = maze_cells[i][j];
+                    i = parseInt(i);
+                    if (!cell.top) {
+                        ctx.moveTo(j * w, i * w);
+                        ctx.lineTo((j + 1) * w, i * w);
+                    }
+                    if (!cell.bottom) {
+                        ctx.moveTo(j * w, (i + 1) * w);
+                        ctx.lineTo((j + 1) * w, (i + 1) * w);
+                    }
+                    if (!cell.left) {
+                        ctx.moveTo(j * w, i * w);
+                        ctx.lineTo(j * w, (i + 1) * w);
+                    }
+                    if (!cell.right) {
+                        ctx.moveTo((j + 1) * w, i * w);
+                        ctx.lineTo((j + 1) * w, (i + 1) * w);
+                    }
+                }
+            }
+            ctx.stroke();
+            ctx.restore();
+            this.drawOffset();
+        },
+        drawRect: function (col, row) {
+            var ctx = this.canvas;
+            ctx.save();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage($('offset'), 0, 0);   //将生成好的地图当做图在清除后重绘
+            ctx.translate(2, 2);
+            ctx.fillStyle = 'red';
+            ctx.fillRect(col * this.cell, row * this.cell, this.cell - 2, this.cell - 2);
+            ctx.restore();
+        },
+        drawOffset: function () {
+            var offsetCanvas = document.createElement('canvas');
+            offsetCanvas.id = 'offset';
+            document.body.appendChild(offsetCanvas);
+            offsetCanvas.width = canvas.width;
+            offsetCanvas.height = canvas.height;
+            var offset = $('offset').getContext('2d');
+            offset.clearRect(0, 0, canvas.width, canvas.height);
+            offset.drawImage(canvas, 0, 0, offsetCanvas.width, offsetCanvas.height);    //将生成好的地图复制到当前canvas,方便后面方块移动时清除画布重绘
+            $('offset').style.display = 'none';
+        },
+        bindEvent: function () {
+
+        }
+    };
+
+    maze = new Maze(canvas, rRow, rCol);
+    window.addEventListener('keydown', function (event) {
+        if (event.keyCode < 37 || event.keyCode > 40) {
+            return true;
+        }
+        switch (event.keyCode) {
+            case 37:
+                event.preventDefault();
+                if (maze_cells[start_row][start_col].left) {
+                    start_col--;
+                }
+                break;
+            case 38:
+                event.preventDefault();
+                if (maze_cells[start_row][start_col].top) {
+                    start_row--;
+                }
+                break;
+            case 39 :
+                event.preventDefault();
+                if (maze_cells[start_row][start_col].right) {
+                    start_col++;
+                }
+                break;
+            case 40:
+                event.preventDefault();
+                if (maze_cells[start_row][start_col].bottom) {
+                    start_row++;
+                }
+                break;
+        }
+        maze.drawRect(start_col, start_row);
+        if (start_col == (maze.col - 1) && start_row == (maze.row - 1)) {
+            $('p').innerHTML = 'arrive!';
+        }
+    });
+
+</script>
+<script>
+    /**
+     * A*算法 --> 自动寻路
+     */
+    var openList = [],                      // 保存临时生成的点
+            closeList = [],                 // 保存结果
+            gw = 10,                        // 水平附加参数
+            gh = 10,                        // 垂直附加参数
+            gwh = 14,                       // 四角附加参数
+            p_start = maze_cells[0][0],               // 起点
+            p_end = maze_cells[rCol - 1][rRow - 1],   // 终点,
+            s_path = p_start,                         // 当前点
+            num;
+
+    function FindRound() {
+        this.init();
+    }
+
+    FindRound.prototype = {
+        getAround: function (pos) {     // 获取原点上下左右4个点
+            var arr = [];
+            arr[0] = [pos.x - 1, pos.y];
+            arr[1] = [pos.x, pos.y - 1];
+            arr[2] = [pos.x, pos.y + 1];
+            arr[3] = [pos.x + 1, pos.y];
+            return arr;
+        },
+        getF: function (arr) {          // 获取F
+            var F, G, H, posX, posY;    //F:综合的距离值，H:距离值 G:水平附加计算
+            for (var i = 0; i < arr.length; i++) {
+                posX = arr[i][1];
+                posY = arr[i][0];
+                if (this.isOut(posX, posY) || this.isStart(posX, posY) || this.isInClose(posX, posY))
+                    continue;
+                G = 14; //因只会存在于水平或垂直位置上,所以设置为14
+                H = (Math.abs(p_end.x - s_path.x) + Math.abs(p_end.y - s_path.y)) * gw;
+                F = G + H;
+                if ((posY > s_path.x && s_path.right && maze_cells[posX][posY].left) /*右侧*/
+                        || (posY < s_path.x && s_path.left && maze_cells[posX][posY].right)   /*左侧*/
+                        || (posX < s_path.y && s_path.top && maze_cells[posX][posY].bottom)   /*上侧*/
+                        || (posX > s_path.y && s_path.bottom && maze_cells[posX][posY].top)   /*下侧*/) {
+                    openList.push({x: posX, y: posY, F: F});
+                }
+            }
+        },
+        isOut: function (posX, posY) {      // 是否出界
+            if (posX < 0 || posX > (rRow - 1) || posY < 0 || posY > (rCol - 1))
+                return true;
+            return false;
+        },
+        isStart: function (posX, posY) {    // 是否为起点
+            if (p_start.x == posX && p_start.y == posY)
+                return true;
+            return false;
+        },
+        isInClose: function (posX, posY) {  // 是否在closeList列表中
+            for (var i = 0; i < closeList.length; i++) {
+                if (closeList[i].y == posX && closeList[i].x == posY)
+                    return true;
+            }
+            return false;
+        },
+        isInOpen: function (posX, posY) { // 是否在openList列表中
+            for (var i = 0; i < openList.length; i++) {
+                if (openList[i].x == posX && openList[i].y == posY) {
+                    num = i;
+                    return true;
+                }
+            }
+            return false;
+        },
+        sort: function (arr) {      //排序
+            var tmp;
+            if (arr.length == 0) return;
+            for (var i = 0; i < arr.length; i++) {
+                console.log(arr[i]);
+            }
+        },
+        loop: function () {
+            this.getF(this.getAround(s_path));
+//            this.sort(openList);
+            s_path = maze_cells[openList[openList.length - 1].x][openList[openList.length - 1].y];
+            closeList.push(s_path);
+            openList[openList.length - 1] = null;
+
+            if (openList.length == 0) {
+                console.info("can't find path!");
+                return;
+            }
+            openList.length = openList.length - 1;
+            if (s_path.x == p_end.x && s_path.y == p_end.y) {
+                for (var i = 0; i < closeList.length; i++) {
+//                    console.log(closeList[i].x, closeList[i].y);
+                    this.getPath(closeList[i].x, closeList[i].y, i);
+                }
+            } else {
+                setTimeout(this.loop(), 100);
+            }
+        },
+        getPath: function (posX, posY, step) {
+            var ctx = maze.canvas;
+            ctx.save();
+            ctx.translate(2, 2);
+            ctx.fillStyle = '#fca1a1';
+            ctx.fillRect(posX * maze.cell, posY * maze.cell, maze.cell - 2, maze.cell - 2);
+            ctx.restore();
+            ctx.font = '12px Arial';
+            ctx.fillStyle = '#fff';
+            ctx.fillText(step, posX * maze.cell + parseInt(maze.cell*.4), posY * maze.cell + parseInt(maze.cell *.7));
+        },
+        init: function () {         // 初始化
+            //按钮设置只能点击一次,避免重复生成线路
+            document.getElementById('autoFind').setAttribute('disabled', 'disabled');
+            closeList.push(s_path);
+            this.loop();
+        }
+    };
+
+</script>
+</body>
+</html>
