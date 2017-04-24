@@ -2,7 +2,8 @@
 Personal demo
  
 ## 在线预览页面 ##
-https://erdayo.github.io/otherDemo/文件夹名称/文件名称
+https://erdayo.github.io/otherDemo/文件夹名称/文件名称  
+
 如: https://erdayo.github.io/otherDemo/waterfall.html
  
 ## tip: ## 
