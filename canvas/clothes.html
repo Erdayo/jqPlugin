@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background: #222;
+    }
+
+    div {
+        background: #222;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+    }
+
+    canvas {
+        background: #000;
+    }
+</style>
+<body>
+
+<div id="container">
+    <canvas id="canvas" width="1000" height="500"></canvas>
+</div>
+<script>
+
+    var num_particles = ( (Rows = 100) * ( Cols = 300)),    // 粒子的数量
+            thickness = Math.pow(80, 2),    // 密度
+            spacing = 3,    // 间距
+            margin = 100,   // 移动的间距
+            color = 220,    // 颜色
+            drag = .95,
+            ease = .25,
+            container,
+            particle,
+            canvas,
+            mouse,
+            list,
+            ctx,
+            tog,
+            man,
+            dx, dy,
+            mx, my,
+            d, t, f,
+            a, b,
+            i, n,
+            w, h,
+            p;
+
+    particle = {
+        vx: 0,
+        vy: 0,
+        x: 0,
+        y: 0
+    };
+
+    function init() {
+        container = document.getElementById('container');
+        canvas = document.getElementById('canvas');
+
+        ctx = canvas.getContext('2d');
+        man = false;
+        tog = true;
+
+        list = [];
+
+        w = canvas.width = Cols * spacing + margin * 2;
+        h = canvas.height = Rows * spacing + margin * 2;
+
+        container.style.marginLeft = Math.round(w * -.5) + 'px';
+        container.style.marginTop = Math.round(h * -.5) + 'px';
+
+        for (i = 0; i < num_particles; i++) {
+            p = Object.create(particle);
+            p.x = p.ox = margin + spacing * (i % Cols);
+            p.y = p.oy = margin + spacing * Math.floor(i / Cols);
+            list[i] = p;
+        }
+
+        container.addEventListener('mousemove', function (e) {
+            mouse = container.getBoundingClientRect();
+            mx = e.clientX - mouse.left;
+            my = e.clientY - mouse.top;
+            man = true;
+        });
+    }
+
+    function step() {
+        if (tog = !tog) {
+            if (!man) {
+                t = +new Date() * .001;
+                mx = w * .5 + ( Math.cos(t * 2.1) * Math.cos(t * .9) * w * .45);
+                my = h * .5 + ( Math.cos(t * 3.2) * Math.tan(Math.sin(t * .8)) * h * .45);
+            }
+
+            for (i = 0; i < num_particles; i++) {
+                p = list[i];
+                d = ( dx = mx - p.x) * dx + ( dy = my - p.y) * dy;
+                f = -thickness / d;
+                if (d < thickness) {
+                    t = Math.atan2(dy, dx);
+                    p.vx += f * Math.cos(t);
+                    p.vy += f * Math.sin(t);
+                }
+                p.x += ( p.vx *= drag ) + (p.ox - p.x) * ease;
+                p.y += ( p.vy *= drag) + (p.oy - p.y) * ease;
+            }
+        }
+        else {
+            b = ( a = ctx.createImageData(w, h)).data;
+            for (i = 0; i < num_particles; i++) {
+                p = list[i];
+                b[n = (~~p.x + ( ~~p.y * w)) * 4] = b[n + 1] = b[n + 2] = color, b[n + 3] = 255;
+            }
+            ctx.putImageData(a, 0, 0);
+        }
+        requestAnimationFrame(step);
+    }
+    init();
+    step();
+</script>
+</body>
+</html>

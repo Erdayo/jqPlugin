@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background: #222;
+    }
+
+    canvas {
+        background: #000;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin-left: -600px;
+        margin-top: -300px;
+        cursor: url("Handwriting.cur"), auto;
+    }
+
+    p {
+        text-align: center;
+        color: #fff;
+        margin-top: 100px;
+    }
+</style>
+<body>
+
+<p>在画布内按住鼠标移动绘制</p>
+<canvas id="canvas" width="1200" height="600"></canvas>
+
+<script>
+    var canvas = document.getElementById('canvas'),
+            ctx = canvas.getContext('2d'),
+            posX, posY,
+            radius,
+            dTimer,
+            color,
+            isStart = false;
+    function DrawCircle() {
+        this.rVel = 5;
+        this.render();
+    }
+    DrawCircle.prototype = {
+        render: function () {
+//            color = 'rgb(' + Math.floor(Math.random() * 255) + ',' + Math.floor(Math.random() * 255) + ',' + Math.floor(Math.random() * 255) + ')';   // rgb颜色
+            color = 'hsl(' + Math.floor(Math.random() * 360) + ',100%,50%)';    // hsl颜色
+            radius = Math.floor(Math.random() * 30);
+            ctx.beginPath();
+            ctx.strokeStyle = color;
+//            ctx.arc(posX, posY, radius, 0, Math.PI * 2, true);
+            ctx.quadraticCurveTo(posX - 10, posY + 10, posX, posY);
+            ctx.stroke();
+            ctx.closePath();
+//            this.update();
+        },
+        update: function () {
+            radius += this.rVel;
+            ctx.beginPath();
+            ctx.strokeStyle = color;
+            ctx.arc(posX, posY, radius, 0, Math.PI * 2, true);
+//            ctx.quadraticCurveTo(posX - 30, posY + 10, posX, posY);
+            ctx.stroke();
+            ctx.closePath();
+        }
+    };
+    var draw = new DrawCircle();
+    canvas.addEventListener('mousedown', function () {
+        isStart = !isStart;
+    });
+    canvas.addEventListener('mouseup', function () {
+        isStart = !isStart;
+    });
+    canvas.addEventListener('mousemove', function (e) {
+        if (!isStart) return true;
+        posX = e.offsetX;
+        posY = e.offsetY;
+        draw.render();
+    });
+</script>
+</body>
+</html>

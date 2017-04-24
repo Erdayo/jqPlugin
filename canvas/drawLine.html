@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background: #000;
+        overflow: hidden;
+    }
+</style>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<script>
+    var c = document.getElementById('canvas');
+    var ctx = c.getContext('2d');
+    var w = window.innerWidth;
+    var h = window.innerHeight;
+    var lines = [];
+    var lineCount = 30;
+    var status = 'true';
+    var r = 100;
+    var l = 300;
+    c.width = w;
+    c.height = h;
+    window.addEventListener('resize', function () {
+        w = window.innerWidth;
+        h = window.innerHeight;
+        c.width = w;
+        c.height = h;
+    });
+
+    setInterval(loop, 30);
+    function changeAngle(angle) {
+        return (angle * (Math.PI / (lineCount / 2)));
+    }
+
+    function drawLine() {
+        this.angle = 0;
+        this.velAngle = 1;
+        this.velCount = 1;
+        this.velR = .2;
+        this.velL = .2;
+        this.hue = 0;
+        this.render = function (ctx) {
+            for (i = 0; i < lineCount; i++) {
+                ctx.strokeStyle = 'hsl(' + (this.hue + (360 * (i / lineCount))) % 360 + ',100%,50%)';
+                ctx.beginPath();
+                ctx.moveTo(w * .5 + r * Math.cos(changeAngle(this.angle)), h * .5 + r * Math.sin(changeAngle(this.angle)));
+                ctx.quadraticCurveTo(r*Math.cos(changeAngle(this.angle)),l*Math.cos(changeAngle(this.angle)),r*Math.cos(changeAngle(this.angle)),l*Math.cos(changeAngle(this.angle)),w*.5 + l * Math.cos(changeAngle(this.angle)), h*.5 + l * Math.sin(changeAngle(this.angle)));
+                ctx.stroke();
+                this.angle += this.velAngle;
+            }
+        };
+
+        this.update = function () {
+            if (lineCount <= 30)
+                status = 'true';
+            if (lineCount >= 180)
+                status = 'false';
+            if (status == 'true')
+            {
+                lineCount += this.velCount;
+                r -= this.velR;
+                l += this.velL;
+            }
+            else
+            {
+                lineCount -= this.velCount;
+                r += this.velR;
+                l -= this.velL;
+            }
+
+        }
+
+    }
+
+    function loop() {
+        var draw = new drawLine();
+        ctx.clearRect(0, 0, w, h);
+        draw.render(ctx);
+        draw.update();
+    }
+
+</script>
+</body>
+</html>

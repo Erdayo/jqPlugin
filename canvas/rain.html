@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background: #000;
+        overflow: hidden;
+    }
+</style>
+<body>
+<canvas id="canvas"></canvas>
+
+<script>
+    var canvas = document.getElementById('canvas'),
+            ctx = canvas.getContext('2d')
+
+    function DrawRain() {
+        this.rain = [];
+        this.xVel = 4;
+        this.yVel = -8;
+        this.Timer = null;
+        this.init();
+    }
+
+    DrawRain.prototype = {
+        init: function () {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            for (var i = 0; i < 10; i++) {
+                this.render();
+            }
+            this.Timer = setInterval(this.loop, 10, this);
+        },
+        render: function () {
+            var color = 'hsl(' + Math.floor(Math.random() * 360) + ',100%,50%)',
+                    posX = Math.floor(Math.random() * (canvas.width * 1.2)),
+                    posY = 0;
+            this.rain.push({color: color, posX: posX, posY: posY});
+            ctx.beginPath();
+            ctx.strokeStyle = color;
+            ctx.quadraticCurveTo(posX - 10, posY + 10, posX, posY);
+            ctx.stroke();
+            ctx.closePath();
+        },
+        update: function () {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (this.rain.length <= 1) {
+                clearInterval(this.Timer);
+            }
+            for (var i = 0; i < this.rain.length; i++) {
+                if (this.rain[i].posY > canvas.height || this.rain[i].posX < 0) {
+                    var tmp = [];
+                    tmp = this.remove(this.rain, i);
+                    this.rain = tmp;
+                }
+                this.rain[i].posX -= this.xVel;
+                this.rain[i].posY -= this.yVel;
+                ctx.beginPath();
+                ctx.strokeStyle = this.rain[i].color;
+                ctx.quadraticCurveTo(this.rain[i].posX - 10, this.rain[i].posY + 10, this.rain[i].posX, this.rain[i].posY);
+                ctx.stroke();
+                ctx.closePath();
+            }
+        },
+        remove: function (arr, pos) {
+            var tmp = [];
+            for (var i = 0; i < arr.length; i++) {
+                if (i != pos)
+                    tmp.push(arr[i]);
+            }
+            return tmp;
+        },
+        loop: function (self) {
+            self.update();
+            self.render();
+        }
+    };
+
+    var draw = new DrawRain();
+</script>
+</body>
+</html>

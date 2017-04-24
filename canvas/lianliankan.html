@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    html, body {
+        background: #333;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+    }
+
+    canvas {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        background: #fff;
+        margin: -223px 0 0 -376px;
+    }
+
+    #start {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 50px;
+        height: 30px;
+        border: 1px solid #fff;
+        color: #fff;
+        background: transparent;
+        margin: 270px 0 0 -25px;
+        cursor: pointer;
+    }
+
+    #start:active {
+        background: #fff;
+        color: #111;
+        border: 1px solid #fff;
+    }
+
+    #start.disabled {
+        background: gray;
+        color: #111;
+        border: 1px solid gray;
+    }
+
+    #reset {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 50px;
+        height: 30px;
+        border: 1px solid #fff;
+        background: transparent;
+        color: #fff;
+        cursor: pointer;
+        margin: 320px 0 0 -25px;
+    }
+
+    #rect {
+        position: relative;
+        width: 754px;
+        height: 448px;
+        border: 1px solid transparent;
+        left: 50%;
+        top: 50%;
+        margin: -224px 0 0 -377px;
+    }
+
+    #rect div {
+        position: absolute;
+        background: transparent;
+        width: 50px;
+        height: 50px;
+        cursor: pointer;
+    }
+
+    #rect div.disabled {
+        cursor: default;
+    }
+
+    #rect div.selected {
+        background: rgba(255, 255, 255, .5);
+    }
+
+    p {
+        color: #fff;
+        text-align: center;
+        position: absolute;
+        width: 100%;
+        top: 100px;
+    }
+</style>
+<body>
+
+<p>双击方块取消选中</p>
+<canvas id="canvas" width="754" height="448"></canvas>
+<div id="rect"></div>
+<button id="start">start</button>
+<!--<button id="reset">reset</button>-->
+
+<script>
+    var llData = [],    //数据存储
+            rows = 7,
+            cols = 4,
+            canvas = document.getElementById('canvas'),
+            ctx = canvas.getContext('2d'),
+            rect = document.getElementById('rect'),
+            start = document.getElementById('start'),
+            isStart = false,
+            currentPos = '',
+            lastPos = '',
+            counter = 0;
+
+    function LL() {
+        this.spacing = 1;
+        this.size = 50;
+        this.linear = 35;
+        this.newData = [];
+        this.init();
+    }
+
+    LL.prototype = {
+        init: function () {
+            var tmp = 0;
+            for (var r = 0; r < rows; r++) {
+                for (var c = 0; c < cols; c++) {
+                    var color = 'hsl(' + tmp + ',100%,50%)',
+                            font = (r * cols) + c;
+                    llData.push({row: r, col: c, color: color, font: font, isMatched: false});
+                    tmp += this.linear;
+                    if (tmp > 360) {
+                        tmp = 15 + this.linear;
+                    }
+                }
+            }
+            this.render();
+            this.startGame();
+        },
+        render: function () {
+            var tmp = [];
+            for (var i = 0; i < 4; i++) {
+                for (var j = 0; j < llData.length; j++) {
+                    tmp.push(j);
+                }
+            }
+
+            for (var r = 0; r < rows * 2; r++) {
+                for (var c = 0; c < cols * 2; c++) {
+                    var ran = Math.floor(Math.random() * tmp.length),
+                            createDiv = document.createElement('div'),
+                            font = (r * cols * 2) + c,
+                            vel = 20;
+
+                    // 绘制小块
+                    ctx.beginPath();
+                    ctx.fillStyle = llData[tmp[ran]].color;
+                    ctx.fillRect(r * (this.size + this.spacing) + vel, c * (this.size + this.spacing) + vel, this.size, this.size);
+                    ctx.fillStyle = '#000';
+                    ctx.fillText(llData[tmp[ran]].font, r * (this.size + this.spacing) + this.size * .4 + vel, c * (this.size + this.spacing) + this.size * .6 + vel);
+                    ctx.closePath();
+                    this.newData.push({
+                        row: r,
+                        col: c,
+                        color: llData[tmp[ran]].color,
+                        font: llData[tmp[ran]].font,
+                        isMatched: llData[tmp[ran]].isMatched
+                    });    //将最终生成的位置存储到新数据
+                    tmp = this.remove(tmp, ran);
+
+                    // 设置对应小块的位置并添加
+                    createDiv.style.left = r * this.size + this.spacing * r + vel + 'px';
+                    createDiv.style.top = c * this.size + this.spacing * c + vel + 'px';
+                    createDiv.setAttribute('class', 'block');
+                    createDiv.setAttribute('onclick', 'Block(' + r + ',' + c + ')');
+                    createDiv.setAttribute('ondblclick', 'cancel(' + r + ',' + c + ')');
+                    rect.appendChild(createDiv);
+                }
+            }
+        },
+        remove: function (arr, pos) {
+            var result = [];
+            for (var i = 0; i < arr.length; i++) {
+                if (i != pos)
+                    result.push(arr[i]);
+            }
+            return result;
+        },
+        startGame: function () {
+            start.addEventListener('click', function () {
+                start.setAttribute('disabled', 'disabled');
+                start.setAttribute('class', 'disabled');
+                isStart = true;
+            })
+        },
+        game: function () {
+            if (lastPos == '') return;
+            var curX = parseInt(currentPos.split(',')[0]),
+                    curY = parseInt(currentPos.split(',')[1]),
+                    lastX = parseInt(lastPos.split(',')[0]),
+                    lastY = parseInt(lastPos.split(',')[1]);
+            if (curX == lastX && curY == lastY) return;
+            if (this.newData[lastX * cols * 2 + lastY].color == this.newData[curX * cols * 2 + curY].color && this.newData[lastX * cols * 2 + lastY].font == this.newData[curX * cols * 2 + curY].font && !this.newData[lastX * cols * 2 + lastY].isMatched && !this.newData[curX * cols * 2 + curY].isMatched) {
+                this.match(lastX, lastY, curX, curY);
+            }
+            else {
+                rect.childNodes[lastX * cols * 2 + lastY].removeAttribute('class');
+                rect.childNodes[curX * cols * 2 + curY].removeAttribute('class');
+                lastPos = '';
+                currentPos = '';
+            }
+        },
+        getAround: function (posX, posY) {
+            var result = [];
+            if (posY - 1 >= 0)
+                result.push(this.newData[posX * cols * 2 + (posY - 1)]);
+            else
+                result.push(false);
+            if (posX + 1 <= rows * 2 - 1)
+                result.push(this.newData[(posX + 1) * cols * 2 + posY]);
+            else
+                result.push(false);
+            if (posY + 1 <= cols * 2 - 1)
+                result.push(this.newData[posX * cols * 2 + (posY + 1)]);
+            else
+                result.push(false);
+            if (posX - 1 >= 0)
+                result.push(this.newData[(posX - 1) * cols * 2 + posY]);
+            else
+                result.push(false);
+
+            return result;
+        },
+        match: function (lastX, lastY, curX, curY) {
+            if (this.check(lastX, lastY, curX, curY)) {
+                rect.childNodes[lastX * cols * 2 + lastY].removeAttribute('class');
+                rect.childNodes[curX * cols * 2 + curY].removeAttribute('class');
+                lastPos = '';
+                currentPos = '';
+                return;
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (var r = 0; r < rows * 2; r++) {
+                for (var c = 0; c < cols * 2; c++) {
+                    var sub = (r * cols * 2 ) + c,
+                            vel = 20;
+                    if (( r == lastX && c == lastY) || ( r == curX && c == curY) || this.newData[sub].isMatched) {
+                        rect.childNodes[r * cols * 2 + c].setAttribute('class', 'disabled');
+                        continue;
+                    }
+                    // 绘制小块
+                    ctx.beginPath();
+                    ctx.fillStyle = this.newData[sub].color;
+                    ctx.fillRect(r * (this.size + this.spacing) + vel, c * (this.size + this.spacing) + vel, this.size, this.size);
+                    ctx.fillStyle = '#000';
+                    ctx.fillText(this.newData[sub].font, r * (this.size + this.spacing) + this.size * .4 + vel, c * (this.size + this.spacing) + this.size * .6 + vel);
+                    ctx.closePath();
+                }
+            }
+
+            // 重置当前及上一个位置并将已匹配的isMatched设置为true
+            currentPos = '';
+            lastPos = '';
+            this.newData[lastX * cols * 2 + lastY].isMatched = true;
+            this.newData[curX * cols * 2 + curY].isMatched = true;
+        },
+        check: function (lastX, lastY, curX, curY) {
+            var curAround = this.getAround(curX, curY),
+                    lastAround = this.getAround(lastX, lastY),
+                    flag = true,
+                    lastPath = [],
+                    curPath = [];
+
+
+            // 判断是否两个相邻
+            for (var i = 0; i < curAround.length; i++) {
+                if (curAround[i] === this.newData[lastX * cols * 2 + lastY]) {
+                    flag = false;
+                    return flag;
+                }
+            }
+
+            // 判断两个选择的是否都为同一边缘
+            if ((lastX == curX && (lastX == 0 || lastX == rows * 2 - 1)) || (lastY == curY && (lastY == 0 || lastY == cols * 2 - 1))) {
+                flag = false;
+                return flag;
+            }
+
+            // 判断十字
+            console.log('--last--');
+            lastPath = this.getCross(lastX, lastY);
+            console.log('--current--');
+            curPath = this.getCross(curX, curY);
+
+            for (var k = 0; k < lastPath.length; k++) {
+                for (var q = 0; q < curPath.length; q++) {
+                    if (lastPath[k][0] == curPath[q][0] && lastPath[k][1] == curPath[q][1])
+                        flag = false;
+                }
+            }
+
+            return flag;
+        },
+        getCross: function (posX, posY) {
+            var path = [];
+            // 行
+            for (var i = 0; i < rows * 2; i++) {
+                if (i != posX && this.newData[i * cols * 2 + posY].isMatched) {
+                    path.push([i, posY]);
+                    console.log(i, posY);
+                }
+            }
+            // 列
+            for (var j = 0; j < cols * 2; j++) {
+                if (j != posY && this.newData[posX * cols * 2 + j].isMatched) {
+                    path.push([posX, j]);
+                    console.log(posX, j);
+                }
+            }
+
+            return path;
+        }
+
+    };
+
+    var ll = new LL();
+    function Block(posX, posY) {    // 将当前点击的方块的位置传给game
+        if (!isStart) {
+            return;
+        }
+        rect.childNodes[posX * cols * 2 + posY].setAttribute('class', 'selected');
+        lastPos = currentPos;
+        currentPos = posX + ',' + posY;
+        ll.game();
+    }
+
+    function cancel(posX, posY) {
+        if (currentPos == posX + ',' + posY) {
+            currentPos = '';
+            rect.childNodes[posX * cols * 2 + posY].removeAttribute('class');
+        }
+    }
+</script>
+
+</body>
+</html>

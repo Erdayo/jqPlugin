@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background: #222;
+        overflow: hidden;
+        text-align: center;
+    }
+
+    canvas {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin: -140px 0 0 -140px;
+    }
+
+    img, #qr {
+        display: none !important;
+    }
+
+    #in {
+        width: 60%;
+        height: 50px;
+        line-height: 50px;
+        margin: 10px;
+        border: 1px solid #fff;
+        background: transparent;
+        color: #fff;
+        padding: 0 10px;
+    }
+</style>
+<body>
+
+<input type="text" id="in" value="Hello World!" onchange="reRender()">
+<canvas id="canvas"></canvas>
+<div id="qr"></div>
+
+<!--生成二维码-->
+<script src="qrcode.js"></script>
+<script>
+    var c = document.getElementById('canvas'),
+        ctx = c.getContext('2d'),
+        w = window.innerWidth,
+        h = window.innerHeight,
+        img = new Image(),
+        img2 = new Image(),
+        imgW = 280,
+        imgH = 280,
+        imgD,
+        imgD2,
+        qr,
+        timer;
+    img.src = '4.jpg';
+    /*
+     *  生成二维码的调用方式
+     * ---简单方式
+     * new QRCode(document.getElementById('qrcode'), 'your content');
+     * ---设置参数方式
+     * var qrcode = new QRCode('qrcode', {
+     * text: 'your content',
+     * width: 256,
+     * height: 256,
+     * colorDark : '#000000',
+     * colorLight : '#ffffff',
+     * correctLevel : QRCode.CorrectLevel.H
+     * });
+     * ---使用 API
+     * qrcode.clear();
+     * qrcode.makeCode('new content');
+     */
+    qr = new QRCode(document.getElementById('qr'), {
+        width: imgW,
+        height: imgH
+    });
+    qr.makeCode(document.getElementById('in').value);
+
+    timer = setTimeout(function () {
+        img2.src = document.querySelectorAll('img')[0].src;
+    }, 1);
+    c.width = imgW;
+    c.height = imgH;
+
+    window.addEventListener('resize', function () {
+        w = window.innerWidth;
+        h = window.innerHeight;
+        c.width = imgW;
+        c.height = imgH;
+        img2.onload();
+        img.onload();
+    });
+
+    function reRender() {
+        qr.makeCode(document.getElementById('in').value);
+        timer = setTimeout(function () {
+            img2.src = document.querySelectorAll('img')[0].src;
+        }, 1);
+        img2.onload();
+        img.onload();
+    }
+
+    img2.onload = function () {
+        var self = this;
+        timer = setTimeout(function () {
+            ctx.drawImage(img2, (c.width - self.width) / 2, (c.height - self.height) / 2);
+            imgD2 = ctx.getImageData(0, 0, c.width, c.height);
+            ctx.clearRect(0, 0, w, h);
+        }, 1);
+    };
+
+    img.onload = function () {
+        ctx.drawImage(img, (c.width - this.width) / 2, (c.height - this.height) / 2);
+        imgD = ctx.getImageData(0, 0, c.width, c.height);
+        ctx.clearRect(0, 0, w, h);
+        timer = setTimeout(function () {
+            for (var i = 0; i < imgD.width; i += 4) {
+                for (var j = 0; j < imgD.height; j += 4) {
+                    // 被绘制的图
+                    var r = imgD.data[(imgD.width * j + i) * 4],
+                        g = imgD.data[(imgD.width * j + i) * 4 + 1],
+                        b = imgD.data[(imgD.width * j + i) * 4 + 2],
+                        a = imgD.data[(imgD.width * j + i) * 4 + 3],
+                        // 二维码
+                        r2 = imgD2.data[(imgD2.width * j + i) * 4],
+                        g2 = imgD2.data[(imgD2.width * j + i) * 4 + 1],
+                        b2 = imgD2.data[(imgD2.width * j + i) * 4 + 2],
+                        a2 = imgD2.data[(imgD2.width * j + i) * 4 + 3];
+
+                    // 依据二维码白边描绘图
+                    if (a2 > 0 && r2 != 0 && g2 != 0 && b2 != 0) {
+                        var p = new Particle(r, g, b, a, i, j);
+                        p.update(ctx, i, j);
+                    }
+                }
+            }
+        }, 200);
+    };
+
+    function Particle(r, g, b, a, posX, posY) {
+        this.posX = posX;
+        this.posY = posY;
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        this.a = a;
+        this.radius = 3;
+        this.render = function (ctx, posx, posy) {
+            ctx.fillStyle = 'rgba(' + (this.r) + ',' + (this.g) + ',' + (this.b) + ',' + (this.a) + ')';
+            ctx.beginPath();
+            ctx.fillRect(posx, posy, this.radius, this.radius);
+            ctx.fill();
+            ctx.closePath();
+        };
+        this.update = function () {
+            setTimeout(function () {
+                this.render(ctx, this.posX, this.posY);
+            }.bind(this), 200);
+        }
+    }
+
+</script>
+
+</body>
+</html>

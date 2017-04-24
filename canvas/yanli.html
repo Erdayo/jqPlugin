@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    html, body {
+        background: #333;
+        overflow: hidden;
+    }
+
+    canvas {
+        background: #000;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin: -250px 0 0 -500px;
+    }
+
+    #glasses div {
+        width: 50px;
+        height: 50px;
+        border: 1px solid #fff;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        opacity: 0;
+        cursor: pointer;
+        border-radius: 50%;
+    }
+
+    #glass1 {
+        margin: -25px 0 0 -320px;
+    }
+
+    #glass2 {
+        margin: -25px 0 0 -20px;
+    }
+
+    #glass3 {
+        margin: -25px 0 0 280px;
+    }
+
+    #start {
+        position: absolute;
+        color: #fff;
+        border: 1px solid #fff;
+        padding: 5px 15px;
+        top: 50%;
+        left: 50%;
+        margin: 200px 0 0 -30px;
+        cursor: pointer;
+        background: transparent;
+        -webkit-user-select: none;
+    }
+
+    #start.disabled {
+        background: gray;
+        color: #000;
+        border: 1px solid gray;
+    }
+    p{ color: #fff; text-align: center; margin: 100px auto;}
+</style>
+<body>
+
+<p>点击开始后,观察最先提示的小球最后在哪.</p>
+<canvas id="canvas" width="1000" height="500"></canvas>
+<div id="glasses">
+    <div id="glass1"></div>
+    <div id="glass2"></div>
+    <div id="glass3"></div>
+</div>
+<button id="start">start</button>
+
+<script>
+    var glass1 = document.getElementById('glass1'),
+            glass2 = document.getElementById('glass2'),
+            glass3 = document.getElementById('glass3'),
+            start = document.getElementById('start'),
+            canvas = document.getElementById('canvas'),
+            ctx = canvas.getContext('2d');
+
+    function DrawRect() {
+        this.width = 50;
+        this.height = 50;
+        this.glasses = [];
+        this.speed = 50;
+        this.xVel = parseInt((glass2.offsetLeft - glass1.offsetLeft) / this.speed * 3.57);
+        this.target = [1, 2, 3];
+        this.Timer = null;
+        this.newGame = false;
+        this.count = 0;
+        this.init();
+    }
+
+    DrawRect.prototype = {
+        init: function () {
+            var tmp = this.target.slice();
+            this.glasses = [];
+            this.Timer = null;
+            for (var i = 0; i < 3; i++) {
+                var posX = i * (glass2.offsetLeft - glass1.offsetLeft) + (glass1.offsetLeft - canvas.offsetLeft) + this.width / 2,
+                        posY = (glass1.offsetTop - canvas.offsetTop) + this.height / 2,
+//                        color = 'hsl(' + Math.floor(Math.random() * 360) + ',100%,50%)',
+                        color = 'rgb(135,206,250)',
+                        ran = Math.floor(Math.random() * tmp.length),
+                        target;
+                target = tmp[ran];
+                tmp = this.remove(tmp, ran);
+                this.render(posX, posY, color);
+                this.glasses.push({
+                    initX: posX,
+                    initY: posY,
+                    posX: posX,
+                    posY: posY,
+                    color: color,
+                    angle: 0,
+                    target: target,
+                    current: i + 1
+                });
+            }
+            if (!this.newGame)
+                this.startGame();
+        },
+        render: function (posX, posY, color) {
+            ctx.beginPath();
+            ctx.fillStyle = color;
+            ctx.arc(posX, posY, this.width / 2, 0, Math.PI * 2, true);
+            ctx.fill();
+            ctx.closePath();
+        },
+        startGame: function () {
+            var self = this, timer;
+            start.addEventListener('click', function () {
+                start.setAttribute('disabled', 'disabled');
+                start.setAttribute('class', 'disabled');
+                timer = setInterval(self.showTarget, this.speed * 2, self, self.count);
+                setTimeout(function () {
+                    clearInterval(timer);
+                    self.change();
+                }, 1000);
+            });
+        },
+        showTarget: function (self, count) {
+            var high = 10;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (var i = 0; i < self.glasses.length; i++) {
+                if (i == 1)
+                    self.glasses[1].posY += Math.pow(-1, self.count) * high;
+                self.render(self.glasses[i].posX, self.glasses[i].posY, self.glasses[i].color);
+            }
+            self.count++;
+        },
+        change: function () {
+            var self = this;
+            self.Timer = setInterval(this.update, this.speed, self);
+            setTimeout(function () {
+                clearInterval(self.Timer);
+                if (!self.newGame)
+                    self.openGlass();
+            }, 3000);
+        },
+        update: function (self) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (var i = 0; i < self.glasses.length; i++) {
+                if (self.glasses[i].angle < 1134) {
+                    self.glasses[i].angle += 4050 / self.speed;
+                }
+                else {
+                    self.glasses[i].angle = 0;
+                    var ran = Math.floor(Math.random() * self.target.length);
+                    self.glasses[i].current = self.glasses[i].target;
+                    self.glasses[i].target = self.target[ran];
+                    self.target = self.remove(self.target, ran);
+//                    console.log(self.glasses[1].target);
+                    if (i == self.glasses.length - 1) {
+                        self.target = [1, 2, 3];
+                    }
+                }
+                self.glasses[i].posX = self.glasses[i].posX + self.xVel * (self.glasses[i].target - self.glasses[i].current);
+                self.glasses[i].posY = -Math.abs(Math.sin(self.glasses[i].angle / 360)) * self.glasses[i].initY + self.glasses[i].initY;
+                self.render(self.glasses[i].posX, self.glasses[i].posY, self.glasses[i].color);
+            }
+        },
+        remove: function (arr, pos) {
+            var tmp = [];
+            for (var i = 0; i < arr.length; i++) {
+                if (i != pos)
+                    tmp.push(arr[i]);
+            }
+            return tmp;
+        },
+        openGlass: function () {
+            var self = this;
+            glass1.addEventListener('click', function () {
+                check(1);
+            });
+            glass2.addEventListener('click', function () {
+                check(2);
+            });
+            glass3.addEventListener('click', function () {
+                check(3);
+            });
+            function check(num) {
+                if (self.glasses[1].target == num)
+                    alert('success!');
+                else
+                    alert('failure!');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                start.removeAttribute('disabled');
+                start.removeAttribute('class');
+                self.newGame = true;
+                self.init();
+            }
+        }
+    };
+
+    var draw = new DrawRect();
+</script>
+</body>
+</html>
