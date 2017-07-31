@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    // 检测兼容模式下的360浏览器
+    function checkIeFor360() {
+        /**
+         * 截止20170731得到有差异的数据项
+         *    	                                    IE	搜狗	                    2345	遨游	    QQ	    360
+         * _IE_DEVTOOLBAR_CONSOLE_COMMAND_LINE	    ×	√	                    √	    √	    √	    √
+         * window.maxConnectionsPerServer	        6	10	                    10	    10	    6       10
+         * navigator.userAgent	                    ×	√/×(IE9及以上)	        ×	    ×	    √	    ×
+         * window.external		                        [Sogou Explorer Object]
+         * navigator.msDoNotTrack (IE10及以下)	    1	0	                    0	    0	    0	    1
+         * window.doNotTrack(IE11)	                1	null	                null	unkonw	null	1
+         *
+         */
+        return (window.maxConnectionsPerServer == 10 && (navigator.msDoNotTrack == 1 || window.doNotTrack == 1));
+    }
+
+    // 检测极速内核下的360浏览器
+    function checkChromeFor360() {
+        var uas = navigator.userAgent.split(' '),
+            result = false;
+        // 排除ua自带标志的双核浏览器, 余下chrome,chromium及360浏览器
+        if (uas[uas.length - 1].indexOf('Safari') == -1) {
+            return result;
+        }
+        for (var key in navigator.plugins) {
+            // np-mswmp.dll文件在chromium及chrome未查询到
+            if (navigator.plugins[key].filename == 'np-mswmp.dll') {
+                return !result;
+            }
+        }
+        return result;
+    }
+
+    if (navigator.userAgent.indexOf('Safari') != -1) {
+        document.writeln(checkChromeFor360());
+    } else {
+        document.writeln(checkIeFor360());
+    }
+</script>
+</body>
+</html>
