@@ -10,13 +10,13 @@
     function checkIeFor360() {
         /**
          * 截止20170731得到有差异的数据项
-         *    	                                    IE	搜狗	                    2345	遨游	    QQ	    360
-         * _IE_DEVTOOLBAR_CONSOLE_COMMAND_LINE	    ×	√	                    √	    √	    √	    √
-         * window.maxConnectionsPerServer	        6	10	                    10	    10	    6       10
-         * navigator.userAgent	                    ×	√/×(IE9及以上)	        ×	    ×	    √	    ×
+         *    	                                    IE	搜狗	                  2345	遨游	  QQ	  360
+         * _IE_DEVTOOLBAR_CONSOLE_COMMAND_LINE	    ×	√	                    √	  √	      √	      √
+         * window.maxConnectionsPerServer	        6	10	                    10	  10	  6       10
+         * navigator.userAgent	                    ×	√/×(IE9及以上)	          ×	    ×	    √	    ×
          * window.external		                        [Sogou Explorer Object]
-         * navigator.msDoNotTrack (IE10及以下)	    1	0	                    0	    0	    0	    1
-         * window.doNotTrack(IE11)	                1	null	                null	unkonw	null	1
+         * navigator.msDoNotTrack (IE10及以下)	      1	  0	                      0	    0	    0	    1
+         * window.doNotTrack(IE11)	                1	null	                null  unkonw   null    1
          *
          */
         return (window.maxConnectionsPerServer == 10 && (navigator.msDoNotTrack == 1 || window.doNotTrack == 1));
