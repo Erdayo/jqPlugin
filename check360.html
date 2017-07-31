@@ -2,24 +2,31 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>check360</title>
 </head>
 <body>
 <script>
     // 检测兼容模式下的360浏览器
     function checkIeFor360() {
         /**
+         *
          * 截止20170731得到有差异的数据项
-         *    	                                    IE	搜狗	                  2345	遨游	  QQ	  360
-         * _IE_DEVTOOLBAR_CONSOLE_COMMAND_LINE	    ×	√	                    √	  √	      √	      √
-         * window.maxConnectionsPerServer	        6	10	                    10	  10	  6       10
-         * navigator.userAgent	                    ×	√/×(IE9及以上)	          ×	    ×	    √	    ×
-         * window.external		                        [Sogou Explorer Object]
-         * navigator.msDoNotTrack (IE10及以下)	      1	  0	                      0	    0	    0	    1
-         * window.doNotTrack(IE11)	                1	null	                null  unkonw   null    1
+         *                                                      IE	搜狗	2345	遨游	QQ	360
+         * _IE_DEVTOOLBAR_CONSOLE_COMMAND_LINE	                 ×	√	√	√	√	√
+         * window.maxConnectionsPerServer	                    10(http协议下值为6)	10	10(http协议下值为6)	10	6	10(http协议下值为6)
+         * navigator.userAgent	                                ×	√/×(IE9及以上)	×	×	√	×
+         * window.external		                                    [Sogou Explorer Object]
+         * navigator.msDoNotTrack (IE10及以下)	                1	0	0	0	0	1
+         * window.doNotTrack(IE11)	                            1	null	null	null	null	1
+         * navigator.msPointerEnabled	                        TRUE	TRUE	FALSE	FALSE	TRUE	TRUE
+         * window.screenLeft - window.screenX != 8 (IE9及以上)	FALSE	TRUE	FALSE	FALSE	TRUE	TRUE
+         * console.count(仅测试了IE7、8)		                    undefined	undefined	undefined	undefined	undefined
          *
          */
-        return (window.maxConnectionsPerServer == 10 && (navigator.msDoNotTrack == 1 || window.doNotTrack == 1));
+        return ((navigator.msPointerEnabled == undefined ? true : navigator.msPointerEnabled)
+        && (navigator.msDoNotTrack == 1 || window.doNotTrack == 1)
+        && ((Number(window.screenX) ? (window.screenLeft - window.screenX != 8) : false)
+        || ((navigator.userAgent.indexOf('MSIE 7.0') != -1 || navigator.userAgent.indexOf('MSIE 8.0') != -1) && console.count == undefined)));
     }
 
     // 检测极速内核下的360浏览器
@@ -44,6 +51,7 @@
     } else {
         document.writeln(checkIeFor360());
     }
+
 </script>
 </body>
 </html>
