@@ -1,0 +1,128 @@
+.bg-2 {
+    position: relative;
+    height: 300px;
+    padding: 50px;
+    overflow: hidden;
+    background: linear-gradient(black 1px, transparent 0) no-repeat top center / 170px 1px,
+    linear-gradient(90deg, black 1px, transparent 0) no-repeat left center / 1px 170px,
+    linear-gradient(black 1px, transparent 0) no-repeat bottom center / 170px 1px,
+    linear-gradient(90deg, black 1px, transparent 0) no-repeat right center / 1px 170px,
+    radial-gradient(circle at center, white 45px, transparent 0),
+    radial-gradient(circle at center, black 46px, transparent 0),
+    linear-gradient(-112.6deg, white 49%, transparent 0) no-repeat 117px 0 / 83px 200px,
+    linear-gradient(-112.6deg, black 50%, transparent 0) no-repeat 117px 0 / 83px 200px,
+    linear-gradient(112.8deg, white 49%, transparent 0) no-repeat 200px 0 / 83px 200px,
+    linear-gradient(112.8deg, black 50%, transparent 0) no-repeat 200px 0 / 83px 200px,
+    linear-gradient(-22.6deg, white 49%, transparent 0) no-repeat 202px 116px / 200px 84px,
+    linear-gradient(-22.6deg, black 50%, transparent 0) no-repeat 202px 116px / 200px 84px,
+    linear-gradient(-157.1deg, white 49%, transparent 0) no-repeat 200px 200px / 200px 83px,
+    linear-gradient(-157.1deg, black 50%, transparent 0) no-repeat 200px 200px / 200px 83px,
+    linear-gradient(67.4deg, white 49%, transparent 0) no-repeat 200px 200px / 83px 200px,
+    linear-gradient(67.4deg, black 50%, transparent 0) no-repeat 200px 200px / 83px 200px,
+    linear-gradient(-67.2deg, white 49%, transparent 0) no-repeat 117px 200px / 83px 200px,
+    linear-gradient(-67.2deg, black 50%, transparent 0) no-repeat 117px 200px / 83px 200px,
+    linear-gradient(157.4deg, white 49%, transparent 0) no-repeat 0 200px / 200px 83px,
+    linear-gradient(157.4deg, black 50%, transparent 0) no-repeat 0 200px / 200px 83px,
+    linear-gradient(22.9deg, white 49%, transparent 0) no-repeat 0 116px / 200px 84px,
+    linear-gradient(22.9deg, black 50%, transparent 0) no-repeat 0 116px / 200px 84px;
+}
+
+.bg-2::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    top: 0;
+    border: 1px solid black;
+    transform: rotate(45deg);
+    z-index: -1;
+}
+
+.bg-2 div {
+    width: 80px;
+    height: 80px;
+    float: left;
+    margin: 10px;
+}
+
+.bg-2 div:first-child {
+    background: linear-gradient(black 15px, transparent 0) 0 0,
+    linear-gradient(black 15px, transparent 0) 0 30px,
+    linear-gradient(white 15px, transparent 0) no-repeat 30px 60px / 20px 15px,
+    linear-gradient(black 15px, transparent 0) 0 60px;
+    transform: rotate(135deg) translateY(10px);
+}
+
+.bg-2 div:nth-child(2) {
+    background: linear-gradient(black 15px, transparent 0) 0 0,
+    linear-gradient(white 15px, transparent 0) no-repeat 30px 30px / 20px 15px,
+    linear-gradient(black 15px, transparent 0) 0 30px,
+    linear-gradient(black 15px, transparent 0) 0 60px;
+    transform: translateY(-50px);
+}
+
+.bg-2 div:nth-child(3) {
+    background: linear-gradient(white 15px, transparent 0) no-repeat 30px 0 / 20px 15px,
+    linear-gradient(black 15px, transparent 0) 0 0,
+    linear-gradient(white 15px, transparent 0) no-repeat 30px 30px / 20px 15px,
+    linear-gradient(black 15px, transparent 0) 0 30px,
+    linear-gradient(white 15px, transparent 0) no-repeat 30px 60px / 20px 15px,
+    linear-gradient(black 15px, transparent 0) 0 60px;
+    transform: rotate(45deg) translateY(-5px);
+}
+
+.bg-2 div:nth-child(4) {
+    background: linear-gradient(white 15px, transparent 0) no-repeat 30px 0 / 20px 15px,
+    linear-gradient(black 15px, transparent 0) 0 0,
+    linear-gradient(white 15px, transparent 0) no-repeat 30px 30px / 20px 15px,
+    linear-gradient(black 15px, transparent 0) 0 30px,
+    linear-gradient(black 15px, transparent 0) 0 60px;
+    transform: translateX(-50px) rotate(90deg);
+}
+
+.bg-2 div:nth-child(5) {
+    margin: 9px;
+    border: 1px solid;
+    border-radius: 50%;
+    background: radial-gradient(circle at 38px 20px, black 5px, transparent 0),
+    radial-gradient(circle at 38px 60px, white 5px, transparent 0),
+    radial-gradient(circle at 38px 60px, black 20px, transparent 0),
+    radial-gradient(circle at 38px 20px, white 20px, transparent 0),
+    linear-gradient(90deg, white 50%, transparent 0),
+    radial-gradient(circle, black 40px, transparent 0);
+    transform: rotate(-30deg);
+}
+
+.bg-2 div:nth-child(6) {
+    background: linear-gradient(white 15px, transparent 0) no-repeat 30px 0 / 20px 15px,
+    linear-gradient(black 15px, transparent 0) 0 0,
+    linear-gradient(black 15px, transparent 0) 0 30px,
+    linear-gradient(black 15px, transparent 0) 0 60px;
+    transform: translateX(50px) rotate(-90deg);
+}
+
+.bg-2 div:nth-child(7) {
+    background: linear-gradient(black 15px, transparent 0) 0 0,
+    linear-gradient(white 15px, transparent 0) no-repeat 30px 30px / 20px 15px,
+    linear-gradient(black 15px, transparent 0) 0 30px,
+    linear-gradient(white 15px, transparent 0) no-repeat 30px 60px / 20px 15px,
+    linear-gradient(black 15px, transparent 0) 0 60px;
+    transform: rotate(45deg) translateY(10px);
+}
+
+.bg-2 div:nth-child(8) {
+    background: linear-gradient(white 15px, transparent 0) no-repeat 30px 0 / 20px 15px,
+    linear-gradient(black 15px, transparent 0) 0 0,
+    linear-gradient(black 15px, transparent 0) 0 30px,
+    linear-gradient(white 15px, transparent 0) no-repeat 30px 60px / 20px 15px,
+    linear-gradient(black 15px, transparent 0) 0 60px;
+    transform: translateY(50px);
+}
+
+.bg-2 div:nth-child(9) {
+    background: linear-gradient(black 15px, transparent 0) 0 0,
+    linear-gradient(black 15px, transparent 0) 0 30px,
+    linear-gradient(black 15px, transparent 0) 0 60px;
+    transform: rotate(-45deg) translateY(10px);
+}
