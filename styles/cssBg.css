@@ -1,3 +1,9 @@
+.bg {
+    width: 300px;
+    height: 200px;
+    margin: 10px;
+}
+
 .bg-2 {
     position: relative;
     height: 300px;
