@@ -1,0 +1,234 @@
+.phone-body {
+    position: relative;
+    width: 335px;
+    height: 690px;
+    margin: 30px 50px;
+    border: 5px solid transparent;
+    border-radius: 3em;
+    background: linear-gradient(hsl(0, 0%, 98%) 100%, transparent 0),
+    linear-gradient(hsla(0, 0%, 96%, 1) 100%, transparent 0) no-repeat -5px 9% / 5px 5px,
+    linear-gradient(hsla(0, 0%, 96%, 1) 100%, transparent 0) no-repeat 335px 9% / 5px 5px,
+    linear-gradient(hsla(0, 0%, 96%, 1) 100%, transparent 0) no-repeat -5px 91% / 5px 5px,
+    linear-gradient(hsla(0, 0%, 96%, 1) 100%, transparent 0) no-repeat 335px 91% / 5px 5px,
+    linear-gradient(360deg, hsla(0, 0%, 100%, .2) 10%, hsla(0, 0%, 100%, .6) 90%) no-repeat -5px 43.1% / 5px 80.4%,
+    linear-gradient(-90deg, hsla(0, 0%, 100%, .2) 10%, hsla(0, 0%, 100%, .6) 90%) no-repeat 35px -5px / 79.2% 5px,
+    linear-gradient(90deg, hsla(0, 0%, 100%, .2) 10%, hsla(0, 0%, 62%, .7) 90%) no-repeat 327px 11px / 14px 87.3%,
+    linear-gradient(90deg, hsla(0, 0%, 60%, .4) 10%, hsla(0, 0%, 62%, .9) 90%) no-repeat 35px 690px / 79.2% 5px,
+    linear-gradient(hsla(0, 0%, 100%, .6) 100%, transparent 0) no-repeat -5px -23px / 12% 12%,
+    linear-gradient(142deg, hsla(0, 0%, 100%, .2) 50%, transparent 0) no-repeat 300px -23px / 12% 12%,
+    linear-gradient(-244deg, hsla(0, 0%, 100%, .2) 40%, hsla(0, 0%, 62%, .4) 60%) no-repeat -5px 613px / 12% 12%,
+    linear-gradient(-90deg, hsla(0, 0%, 62%, .6) 10%, hsla(0, 0%, 62%, .9) 90%) no-repeat 300px 613px / 12% 12%,
+    linear-gradient(rgb(217, 217, 217) 100%, transparent 0);
+    background-clip: padding-box, border-box, border-box, border-box, border-box, border-box, border-box, border-box, border-box, border-box, border-box, border-box, border-box, border-box;
+    box-shadow: 0 0 6px #ddd inset, 0 0 7px #e5e5e5 inset;
+    filter: drop-shadow(0 0 10px hsla(0, 0%, 0%, .7));
+}
+
+.phone-elem div {
+    position: absolute;
+}
+
+.phone-elem .camera {
+    top: 3%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 80% 80%, hsla(0, 0%, 100%, .2) 10%, transparent 90%) hsl(0, 0%, 27%);
+    transform: translateX(-50%);
+}
+
+.phone-elem .camera::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 23% 10%, hsl(218, 98%, 43%) 2px, transparent 0),
+    radial-gradient(circle at 76% 40%, hsl(218, 98%, 43%) 1px, transparent 0),
+    radial-gradient(circle at 34% 75%, hsl(218, 98%, 43%) 1px, transparent 0) hsl(0, 0%, 15%);
+    transform: translate(-50%, -50%);
+}
+
+.phone-elem .sensor {
+    top: 7%;
+    left: 34%;
+    width: 4px;
+    height: 4px;
+    border: 1px solid hsl(0, 0%, 76%);
+    border-radius: 50%;
+    background: hsl(0, 0%, 80%);
+}
+
+.phone-elem .earpiece {
+    top: 7%;
+    left: 50%;
+    width: 60px;
+    height: 6px;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    background: linear-gradient(45deg, rgba(0, 0, 0, .25) 25%, hsla(0, 0%, 0%, .1) 0, hsla(0, 0%, 0%, .1) 75%, rgba(0, 0, 0, .25) 0) 0 0 / 2px 2px,
+    linear-gradient(45deg, rgba(0, 0, 0, .25) 25%, hsla(0, 0%, 0%, .1) 0, hsla(0, 0%, 0%, .1) 75%, rgba(0, 0, 0, .25) 0) 1px 1px / 2px 2px,
+    linear-gradient(45deg, hsla(0, 0%, 100%, .5) 50%, transparent 0) no-repeat -1px 3px / 4px 4px,
+    linear-gradient(-45deg, hsla(0, 0%, 100%, .7) 50%, transparent 0) no-repeat 57px 3px / 4px 4px,
+    linear-gradient(90deg, hsla(0, 0%, 100%, .5) 30%, hsla(0, 0%, 100%, .7) 70%) no-repeat 2px 6px / 56px 1px,
+    linear-gradient(hsla(0, 0%, 82%, 1) 100%, transparent 0);
+    background-clip: content-box, content-box, border-box, border-box, border-box, border-box;
+    transform: translateX(-50%);
+}
+
+.phone-elem .home {
+    bottom: 2%;
+    left: 50%;
+    width: 50px;
+    height: 50px;
+    border: 4px solid transparent;
+    border-radius: 50%;
+    background: radial-gradient(hsl(0, 0%, 98%) 100%, transparent 0),
+    radial-gradient(circle at 90px 90px, transparent 0, hsla(0, 0%, 0%, .7) 100%) no-repeat -4px -4px / 87% 87%,
+    radial-gradient(circle, transparent 56%, hsla(0, 0%, 42%, .5) 100%);
+    background-clip: content-box, border-box, border-box;
+    box-shadow: 2px 2px 1px hsla(0, 0%, 0%, .1) inset;
+    transform: translate(-50%) rotate(21deg);
+}
+
+.phone-elem .speaker {
+    bottom: -5px;
+    left: 10%;
+    width: 10px;
+    height: 3px;
+    overflow: hidden;
+}
+
+.phone-elem .speaker::before {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 6px;
+    border-radius: 50%;
+    background: radial-gradient(hsla(0, 0%, 100%, .5) 23%, transparent 100%) no-repeat 0 -3px / 100% 4px;
+    box-shadow: 0 1px 2px hsla(0, 0%, 42%, .5) inset;
+}
+
+.btn-lock {
+    left: -9px;
+    top: 15%;
+    height: 32px;
+}
+
+.btn-vol-up {
+    left: -9px;
+    top: 27%;
+    height: 50px;
+}
+
+.btn-vol-down {
+    left: -9px;
+    top: 37%;
+    height: 50px;
+}
+
+.btn {
+    width: 6px;
+    border-radius: 35%;
+    overflow: hidden;
+    background: hsl(0, 0%, 82%);
+    box-shadow: 1px 0 1px hsla(0, 0%, 0%, .3);
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 25%;
+    height: 100%;
+    display: block;
+    background: linear-gradient(hsla(150, 1%, 61%, .3) 90%, transparent 100%) no-repeat 0 0 /100% 15%,
+    linear-gradient(360deg, hsla(150, 1%, 61%, .3) 90%, transparent 100%) no-repeat 0 100% /100% 15%,
+    linear-gradient(hsla(0, 0%, 100%, .2) 100%, transparent 0);
+}
+
+.btn::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    width: 75%;
+    height: 100%;
+    display: block;
+    background: linear-gradient(hsla(0, 0%, 100%, .2) 20%, transparent 100%) no-repeat 0 0 / 100% 50%,
+    linear-gradient(360deg, hsla(0, 0%, 100%, .2) 20%, transparent 100%) no-repeat 0 100% / 100% 50%,
+    linear-gradient(hsla(150, 1%, 61%, 1) 100%, transparent 0);
+    z-index: 2;
+}
+
+.btn-wake {
+    right: -9px;
+    top: 25%;
+    width: 6px;
+    height: 50px;
+    border-radius: 35%;
+    overflow: hidden;
+    background: hsl(0, 0%, 82%);
+    box-shadow: -1px 0 1px hsla(0, 0%, 0%, .3);
+}
+
+.btn-wake::before {
+    content: '';
+    position: absolute;
+    right: 0;
+    width: 30%;
+    height: 100%;
+    display: block;
+    background: linear-gradient(hsla(150, 1%, 61%, .3) 90%, transparent 100%) no-repeat 0 0 /100% 15%,
+    linear-gradient(360deg, hsla(150, 1%, 61%, .3) 90%, transparent 100%) no-repeat 0 100% /100% 15%,
+    linear-gradient(hsla(0, 0%, 100%, .2) 100%, transparent 0);
+}
+
+.btn-wake::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 70%;
+    height: 100%;
+    display: block;
+    background: linear-gradient(hsla(0, 0%, 100%, .2) 20%, transparent 100%) no-repeat 0 0 / 100% 50%,
+    linear-gradient(360deg, hsla(0, 0%, 100%, .2) 20%, transparent 100%) no-repeat 0 100% / 100% 50%,
+    linear-gradient(hsl(150, 1%, 61%) 50%, hsl(150, 1%, 54%) 100%);
+    z-index: 2;
+}
+
+.phone-screen {
+    position: absolute;
+    top: 12%;
+    left: 4%;
+    bottom: 14%;
+    right: 4%;
+    border-radius: 5px;
+    background: hsla(0, 0%, 0%, .9);
+}
+
+.content {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    bottom: 3px;
+    right: 3px;
+    background: hsl(39, 100%, 60%);
+}
+
+.content p {
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    font-size: 40px;
+}
+
+.content p:first-child {
+    margin-top: 50%;
+}
+
+.content p:nth-child(2) {
+    font-size: 28px;
+}
