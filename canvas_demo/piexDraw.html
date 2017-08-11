@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background: #000;
+        overflow: hidden;
+    }
+</style>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<script>
+    var c = document.getElementById('canvas');
+    var ctx = c.getContext('2d');
+    var w = window.innerWidth;
+    var h = window.innerHeight;
+    var img = new Image();
+    var imgW = img.naturalWidth;
+    var imgH = img.naturalHeight;
+    var imgD;
+    img.src = '2.jpg';
+    c.width = w;
+    c.height = h;
+
+    window.addEventListener('resize', function () {
+        w = window.innerWidth;
+        h = window.innerHeight;
+        c.width = w;
+        c.height = h;
+        img.onload();
+    });
+
+    img.onload = function () {
+        ctx.drawImage(img, 0, 0);
+        imgD = ctx.getImageData(0, 0, w, h);
+        ctx.clearRect(0, 0, w, h);
+        for (var i = 0; i < imgD.width; i += 4) {
+            for (var j = 0; j < imgD.height; j += 4) {
+                var r = imgD.data[(imgD.width * j + i) * 4];
+                var g = imgD.data[(imgD.width * j + i) * 4+1];
+                var b = imgD.data[(imgD.width * j + i) * 4+2];
+                var a = imgD.data[(imgD.width * j + i) * 4+3 ];
+                if (a > 0) {
+                    var p = new particle(r, g, b, a, i, j);
+                    p.render(ctx);
+                }
+            }
+        }
+//        ctx.drawImage(img, 1000, 50);
+    };
+
+
+    function particle(r, g, b, a, posX, posY) {
+        this.posX = posX;
+        this.posY = posY;
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        this.a = a;
+        this.radius = 3;
+        this.render = function (ctx) {
+//            ctx.fillStyle = 'rgb('+(255-this.r)+','+(255-this.g)+','+(255-this.b)+')';
+            ctx.fillStyle = 'rgba(' + (this.r) + ',' + (this.g) + ',' + (this.b) + ',' + (this.a) + ')';
+            ctx.beginPath();
+//            ctx.arc(this.posX, this.posY, this.radius, 0, Math.PI * 2, true);
+            ctx.fillRect(this.posX,this.posY,this.radius,this.radius);
+            ctx.fill();
+            ctx.closePath();
+        }
+    }
+</script>
+
+</body>
+</html>

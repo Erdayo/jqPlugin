@@ -8,7 +8,7 @@
     <meta name="wap-font-scale" content="no">
     <meta name="format-detection" content="telephone=no"/>
     <meta content="email=no" name="format-detection"/>
-    <link href="res/css/reset.css" rel="stylesheet" type="text/css">
+    <link href="../res/css/reset.css" rel="stylesheet" type="text/css">
 </head>
 <style>
     .searchDiv {
@@ -75,7 +75,7 @@
         line-height: 40px;
         color: #3e3d3d;
         text-align: center;
-        background: url("images/searchBtn.png") 0 0;
+        background: url("../res/images/searchBtn.png") 0 0;
         font-size: 14px;
         float: right;
         border: none;
@@ -165,7 +165,7 @@
 
 <div class="searchDiv">
     <div class="searchL fl">
-        <a href="http://www.baidu.com/index.php?tn=92068069_pg&ch=11"><img src="images/baidu.png" alt="百度首页"></a>
+        <a href="http://www.baidu.com/index.php?tn=92068069_pg&ch=11"><img src="../res/images/baidu.png" alt="百度首页"></a>
     </div>
     <div class="searchM fl">
         <div class="searchTab">
@@ -238,7 +238,7 @@
     </div>
 </div>
 
-<script src="res/js/jquery-1.8.3.min.js"></script>
+<script src="../res/js/jquery-1.8.3.min.js"></script>
 <script>
     var sDiv = $('.searchDiv'),
             sLogo = sDiv.find('.searchL img'),
@@ -259,7 +259,7 @@
 
     sTab.click(function () {
         subs = $(this).index();
-        sLogo.attr('src', 'images/' + sLogoArr[subs] + '.png').parent().attr('href', sLogoLink[subs]);
+        sLogo.attr('src', '../res/images/' + sLogoArr[subs] + '.png').parent().attr('href', sLogoLink[subs]);
         sBtn.text(sBtnArr[subs]);
         sForm.attr('action', sActionArr[subs]);
         $(this).addClass('on').siblings().removeClass('on');
