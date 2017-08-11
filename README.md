@@ -16,12 +16,12 @@
 	[yanli.html --- 眼力考验](https://erdayo.github.io/otherDemo/canvas_demo/yanli.html)  
 	
 - css3_demo	  
-	[resterized --- 栅格化](https://erdayo.github.io/otherDemo/css3_demo/restersized/index.html)  
+	[rasterized --- 栅格化](https://erdayo.github.io/otherDemo/css3_demo/rasterized/index.html)  
 	[bagua.html --- 八卦](https://erdayo.github.io/otherDemo/css3_demo/bagua.html)  
 	[iphone6.html --- iphone6](https://erdayo.github.io/otherDemo/css3_demo/iphone6.html) 
  	
 - js_demo  
-	[bannerJs --- 轮播](https://erdayo.github.io/otherDemo/js_demo/bannerJs/index.html)  
+	[bannerJs --- 轮播](https://erdayo.github.io/otherDemo/js_demo/bannerJs/banner.html)  
 	[dragJs --- 拖拽](https://erdayo.github.io/otherDemo/js_demo/dragJs/index.html)  
 	[emoji --- 表情](https://erdayo.github.io/otherDemo/js_demo/emoji/index.html)  
 	[lib --- 自己编写的一个较为常用的一个jq插件库](https://erdayo.github.io/otherDemo/js_demo/lib/index.html)   
