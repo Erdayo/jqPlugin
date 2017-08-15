@@ -19,7 +19,8 @@
 - css3_demo	  
 	[rasterized --- 栅格化](https://erdayo.github.io/otherDemo/css3_demo/rasterized/index.html)  
 	[bagua.html --- 八卦](https://erdayo.github.io/otherDemo/css3_demo/bagua.html)  
-	[iphone6.html --- iphone6](https://erdayo.github.io/otherDemo/css3_demo/iphone6.html) 
+	[iphone6.html --- iphone6](https://erdayo.github.io/otherDemo/css3_demo/iphone6.html)  
+	[loading.html --- loading加载动画==>看到一篇文章,突然就自己动手用背景写了写,原文链接附在文件里了](https://erdayo.github.io/otherDemo/css3_demo/loading.html) 
  	
 - js_demo  
 	[bannerJs --- 轮播](https://erdayo.github.io/otherDemo/js_demo/bannerJs/banner.html)  
