@@ -14,6 +14,7 @@
 	[rain.html --- 雨](https://erdayo.github.io/otherDemo/canvas_demo/rain.html)  
 	[textChange.html --- 文字变化](https://erdayo.github.io/otherDemo/canvas_demo/textChange.html)  
 	[yanli.html --- 眼力考验](https://erdayo.github.io/otherDemo/canvas_demo/yanli.html)  
+	[picToText.html --- 图片转字符串输出](https://erdayo.github.io/otherDemo/canvas_demo/picToText.html)  
 	
 - css3_demo	  
 	[rasterized --- 栅格化](https://erdayo.github.io/otherDemo/css3_demo/rasterized/index.html)  
