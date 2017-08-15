@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Picture to strings</title>
+    <link href="styles/normalize.min.css" rel="stylesheet" type="text/css">
+</head>
+<style>
+    #result {
+        display: block;
+        width: 1000px;
+        height: 800px;
+        margin: 10px auto;
+        border: 1px solid;
+        resize: none;
+        font: 12px 'Consolas';
+        line-height: 1;
+        letter-spacing: 4px;
+    }
+
+    #result:focus {
+        outline: none;
+    }
+
+    .opt {
+        width: 1000px;
+        margin: 10px auto;
+    }
+</style>
+<body>
+
+<textarea id="result" readonly></textarea>
+<div class="opt">
+    <input type="file" accept="image/png" id="fileName">
+    <input type="text" maxlength="1" placeholder="请输入要转换的字符,如+" id="char">
+</div>
+
+<script>
+    function PicToText() {
+        this.resultObj = document.getElementById('result');
+        this.fileObj = document.getElementById('fileName');
+        this.charObj = document.getElementById('char');
+        this.defaultPath = 'images/num.png';
+        this.defaultChar = '+';
+        this.curWidth = 0;
+        this.curHeight = 0;
+        this.moveTimer = undefined;
+
+        // create canvas
+        this.canvas = document.createElement('canvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.canvas.width = this.resultObj.clientWidth;
+        this.canvas.height = this.resultObj.clientHeight;
+        this.init();
+    }
+    PicToText.prototype = {
+        init: function () {
+            this.loadImg();
+            this.changePath();
+            this.changeChar();
+        },
+        loadImg: function () {
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            var img = new Image();
+            img.src = this.defaultPath;
+            img.onload = function () {
+                if (img.width > this.canvas.width || img.height > this.canvas.height) {
+                    var rate = img.width / img.height;
+                    this.ctx.drawImage(img, (this.canvas.width - this.canvas.height * rate) / 2, 0, this.canvas.height * rate, this.canvas.height);
+                    this.curWidth = this.canvas.height * rate;
+                    this.curHeight = this.canvas.height;
+                } else {
+                    this.ctx.drawImage(img, (this.canvas.width - img.width) / 2, (this.canvas.height - img.height) / 2);
+                    this.curWidth = img.width;
+                    this.curHeight = img.height;
+                }
+                this.convert();
+            }.bind(this);
+        },
+        changePath: function () {
+            this.fileObj.onchange = function () {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    this.defaultPath = e.target.result;
+                    clearTimeout(this.moveTimer);
+                    this.loadImg();
+                }.bind(this);
+                reader.readAsDataURL(this.fileObj.files[0]);
+            }.bind(this);
+        },
+        changeChar: function () {
+            var self = this;
+            this.charObj.onchange = function () {
+                self.defaultChar = this.value.trim() || self.defaultChar;
+                clearTimeout(this.moveTimer);
+                self.convert();
+            };
+        },
+        convert: function () {
+            var imgD;
+            this.resultObj.value = '';
+            imgD = this.ctx.getImageData((this.canvas.width - this.curWidth) / 2, (this.canvas.height - this.curHeight) / 2, this.curWidth, this.curHeight);
+            // 慢绘
+            /*
+            for (var j = imgD.height - 1; j >= 0; j -= 4) {
+                for (var i = imgD.width - 1; i >= 0; i -= 4) {
+//                    var r = imgD.data[(imgD.width * j + i) * 4];
+//                    var g = imgD.data[(imgD.width * j + i) * 4 + 1];
+//                    var b = imgD.data[(imgD.width * j + i) * 4 + 2];
+                    var a = imgD.data[(imgD.width * j + i) * 4 + 3];
+                    if (a > 0) {
+                        this.moveTimer = setTimeout(function () {
+                            this.resultObj.value += this.defaultChar;
+                            this.fileObj.setAttribute('disabled', 'disabled');
+                            this.charObj.setAttribute('disabled', 'disabled');
+                        }.bind(this), 10 + (~~imgD.width / 4 * j + i));
+                    } else {
+                        this.moveTimer = setTimeout(function () {
+                            this.resultObj.value += ' ';
+                            this.fileObj.setAttribute('disabled', 'disabled');
+                            this.charObj.setAttribute('disabled', 'disabled');
+                        }.bind(this), 10 + (~~imgD.width / 4 * j + i));
+                    }
+                    if (j == imgD.height % 4 && i == imgD.width % 4) {
+                        console.log('1');
+                        this.moveTimer = setTimeout(function () {
+                            this.fileObj.removeAttribute('disabled');
+                            this.charObj.removeAttribute('disabled');
+                        }.bind(this), 10 + (~~imgD.width / 4 * j + i));
+                    }
+                }
+                this.moveTimer = setTimeout(function () {
+                    this.resultObj.value += '\n';
+                    this.fileObj.setAttribute('disabled', 'disabled');
+                    this.charObj.setAttribute('disabled', 'disabled');
+                }.bind(this), 10 + (~~imgD.width / 4 * j + i));
+            }
+            */
+
+            // 速绘
+            for (var j = 0; j < imgD.height; j += 4) {
+                for (var i = 0; i < imgD.width; i += 4) {
+                    var a = imgD.data[(imgD.width * j + i) * 4 + 3];
+                    if (a > 0) {
+                        this.resultObj.value += this.defaultChar;
+                    } else {
+                        this.resultObj.value += ' ';
+                    }
+                }
+                this.resultObj.value += '\n';
+            }
+        }
+    };
+
+    var ptt = new PicToText();
+</script>
+
+
+</body>
+</html>
