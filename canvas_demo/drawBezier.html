@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>draw bezier</title>
+</head>
+<style>
+    body {
+        overflow: hidden;
+    }
+
+    canvas {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 0 1px black;
+    }
+
+    .opt {
+        position: absolute;
+        top: 2%;
+        left: 2%;
+        z-index: 2;
+    }
+</style>
+<body>
+
+<canvas id="canvas"></canvas>
+<div class="opt">
+    <p>辅助线: <input id="auxiliary" type="checkbox" checked></p>
+    <p>
+        <button id="cancel">撤销动作</button>
+    </p>
+    <p>
+        <button id="reset">画布清空</button>
+    </p>
+</div>
+
+<script>
+    function DrawBezier() {
+        this.canvas = document.getElementById('canvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.width = window.innerWidth * .7;
+        this.height = window.innerHeight * .7;
+        this.start_points = [];
+        this.end_points = [];
+        this.isShow = true;
+        this.radius = 2;
+
+        // edit property
+        this.canvas.width = this.width;
+        this.canvas.height = this.height;
+
+        // use function
+        this.init();
+    }
+    DrawBezier.prototype = {
+        /**
+         * 初始化
+         */
+        init: function () {
+            this.getNewPoint();
+            this.isShowAuxiliary();
+            this.cancelOption();
+            this.resetCanvas();
+        },
+
+        /**
+         * 获取新创建的点
+         */
+        getNewPoint: function () {
+            var isClick = false,
+                self = this;
+
+            // 鼠标按下 创建起点, 若isClick为真,表示鼠标弹起不在作用范围内则删除上个起点,重新创建;
+            this.canvas.onmousedown = function (e) {
+                if (isClick) {
+                    self.start_points.pop();
+                }
+                isClick = true;
+                self.start_points.push({x: e.offsetX, y: e.offsetY});
+                self.drawOldPoint({x: e.offsetX, y: e.offsetY});
+            };
+
+            // 鼠标按下并移动 绘制当前点的辅助线及与上个点产生的贝塞尔曲线
+            this.canvas.onmousemove = function (e) {
+                if (isClick) {
+                    var point = self.start_points[self.start_points.length - 1];
+                    self.drawOldPoint({x: e.offsetX, y: e.offsetY});
+                    self.ctx.beginPath();
+                    self.ctx.fillStyle = 'yellow';
+                    self.ctx.arc(point.x, point.y, self.radius, 0, 360 * Math.PI / 2, true);
+                    self.ctx.fill();
+                    self.ctx.strokeStyle = 'yellowgreen';
+                    self.ctx.moveTo(point.x, point.y);
+                    self.ctx.lineTo(e.offsetX, e.offsetY);
+                    self.ctx.stroke();
+                    self.ctx.closePath();
+
+                    if (self.start_points.length > 1) {
+                        var prevSub = self.start_points.length - 2;
+                        self.ctx.beginPath();
+                        self.ctx.strokeStyle = 'red';
+                        self.ctx.moveTo(self.start_points[prevSub].x, self.start_points[prevSub].y);
+                        self.ctx.bezierCurveTo(self.end_points[prevSub].x, self.end_points[prevSub].y, e.offsetX, e.offsetY, point.x, point.y);
+                        self.ctx.stroke();
+                        self.ctx.closePath();
+                    }
+                }
+            };
+
+            // 鼠标弹起 存入控制点
+            this.canvas.onmouseup = function (e) {
+                isClick = false;
+                self.end_points.push({x: e.offsetX, y: e.offsetY});
+            };
+        },
+
+        /**
+         * 描绘已确定的点
+         */
+        drawOldPoint: function (tmpPoint) {
+            this.ctx.clearRect(0, 0, this.width, this.height);
+            var l = this.start_points.length;
+
+            // 只有一个点的时做辅助线
+            if (l < 2) {
+                this.ctx.beginPath();
+                this.ctx.fillStyle = 'yellow';
+                this.ctx.arc(this.start_points[0].x, this.start_points[0].y, this.radius, 0, 360 * Math.PI / 2, true);
+                this.ctx.fill();
+                this.ctx.moveTo(this.start_points[0].x, this.start_points[0].y);
+                this.ctx.strokeStyle = 'yellowgreen';
+                this.ctx.lineTo(tmpPoint != undefined ? tmpPoint.x : this.end_points[0].x, tmpPoint != undefined ? tmpPoint.y : this.end_points[0].y);
+                this.ctx.stroke();
+                this.ctx.closePath();
+                return;
+            }
+
+            for (var i = 0; i < l; i++) {
+                var point = this.start_points[i],
+                    end_point = this.end_points[i] || tmpPoint;
+
+                //  是否需要绘制辅助线
+                if (this.isShow) {
+                    this.ctx.beginPath();
+                    i == l - 1 ? this.ctx.fillStyle = 'yellow' : this.ctx.fillStyle = 'grey';
+                    this.ctx.arc(point.x, point.y, this.radius, 0, 360 * Math.PI / 2, true);
+                    this.ctx.fill();
+                    this.ctx.moveTo(point.x, point.y);
+                    i == l - 1 ? this.ctx.strokeStyle = 'yellowgreen' : this.ctx.strokeStyle = 'gray';
+                    this.ctx.lineTo(end_point.x, end_point.y);
+                    this.ctx.stroke();
+                    this.ctx.closePath();
+                }
+
+                // 绘制贝塞尔曲线
+                if (i > 0) {
+                    this.ctx.beginPath();
+                    this.ctx.strokeStyle = 'red';
+                    this.ctx.moveTo(this.start_points[i - 1].x, this.start_points[i - 1].y);
+                    this.ctx.bezierCurveTo(this.end_points[i - 1].x, this.end_points[i - 1].y, end_point.x, end_point.y, point.x, point.y);
+                    this.ctx.stroke();
+                    this.ctx.closePath();
+                }
+            }
+        },
+
+        /**
+         * 辅助线是否显示
+         */
+        isShowAuxiliary: function () {
+            var checkbox = document.getElementById('auxiliary'),
+                self = this;
+            checkbox.onchange = function () {
+                self.isShow = this.checked;
+                self.drawOldPoint();
+            };
+        },
+
+        /**
+         * 撤销动作
+         */
+        cancelOption: function () {
+            var cancel = document.getElementById('cancel'),
+                prevKey = undefined,
+                curKey = undefined,
+                self = this;
+            cancel.onclick = function () {
+                if (this.start_points.length == 1) {
+                    console.info('无更多动作');
+                    this.start_points.pop();
+                    this.end_points.pop();
+                    this.ctx.clearRect(0, 0, this.width, this.height);
+                    return;
+                }
+                this.start_points.pop();
+                this.end_points.pop();
+                if (this.start_points.length > 0) {
+                    this.drawOldPoint();
+                }
+            }.bind(this);
+
+            window.document.onkeydown = function (e) {
+                curKey = e.which;
+                if (prevKey == 17 && curKey == 90) {
+                    if (self.start_points.length == 1) {
+                        console.info('无更多动作');
+                        self.start_points.pop();
+                        self.end_points.pop();
+                        self.ctx.clearRect(0, 0, self.width, self.height);
+                        return;
+                    }
+                    self.start_points.pop();
+                    self.end_points.pop();
+                    if (self.start_points.length > 0) {
+                        self.drawOldPoint();
+                    }
+                }
+                prevKey = curKey;
+            }
+        },
+
+        /**
+         * 画布清空
+         */
+        resetCanvas: function () {
+            var reset = document.getElementById('reset');
+            reset.onclick = function () {
+                this.ctx.clearRect(0, 0, this.width, this.height);
+                this.start_points = [];
+                this.end_points = [];
+            }.bind(this);
+        }
+    };
+
+    var db = new DrawBezier();
+
+</script>
+</body>
+</html>

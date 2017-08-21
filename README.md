@@ -15,6 +15,7 @@
 	[textChange.html --- 文字变化](https://erdayo.github.io/otherDemo/canvas_demo/textChange.html)  
 	[yanli.html --- 眼力考验](https://erdayo.github.io/otherDemo/canvas_demo/yanli.html)  
 	[picToText.html --- 图片转字符串输出](https://erdayo.github.io/otherDemo/canvas_demo/picToText.html)  
+	[drawBezier.html --- 贝塞尔曲线作图](https://erdayo.github.io/otherDemo/canvas_demo/drawBezier.html) 
 	
 - css3_demo	  
 	[rasterized --- 栅格化](https://erdayo.github.io/otherDemo/css3_demo/rasterized/index.html)  
@@ -33,7 +34,7 @@
 	[articlePaging --- 长文章伪分页](https://erdayo.github.io/otherDemo/practical_demo/articlePaging.html)  
 	[barrage --- 弹幕](https://erdayo.github.io/otherDemo/practical_demo/barrage.html)  
 	[bdSearchDemo --- 百度搜索实时提示](https://erdayo.github.io/otherDemo/practical_demo/bdSearchDemo.html)   
-	[check360 --- 检测360(安全/极速)浏览器,包括极速与兼容模式](https://erdayo.github.io/otherDemo/practical_demo/check360.html)
+	[check360 --- 检测360(安全/极速)浏览器,包括极速与兼容模式](https://erdayo.github.io/otherDemo/practical_demo/check360.html)  
 	[route --- 迷宫自动寻路](https://erdayo.github.io/otherDemo/practical_demo/route.html)  
 	[uploadPreview --- 图片上传预览](https://erdayo.github.io/otherDemo/practical_demo/uploadPreview.html)  
 	[videoTest --- 视频](https://erdayo.github.io/otherDemo/practical_demo/videoTest.html)  
