@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>inverse matrix</title>
+    <link href="styles/normalize.min.css" rel="stylesheet" type="text/css">
+</head>
+<style>
+    .container {
+        float: left;
+        width: 120px;
+        height: 100px;
+        margin: 50px;
+        overflow: hidden;
+    }
+
+    .left-brackets {
+        float: left;
+        width: 10px;
+        height: 98px;
+        border: 1px solid black;
+        border-right: none;
+    }
+
+    .right-brackets {
+        float: right;
+        width: 10px;
+        height: 98px;
+        border: 1px solid black;
+        border-left: none;
+    }
+
+    span {
+        float: left;
+        margin: 85px 10px;
+        font-size: 26px;
+    }
+
+    .number {
+        float: left;
+        width: 98px;
+    }
+
+    input {
+        float: left;
+        width: 40px;
+        height: 25px;
+        margin: 11px 3px;
+        border: 1px solid black;
+        text-align: center;
+        outline: none;
+        -webkit-appearance: none;
+    }
+
+    input:focus {
+        border-color: #6adbff;
+    }
+
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none !important;
+        margin: 0;
+    }
+
+    .calcArea {
+        overflow: hidden;
+    }
+
+    canvas {
+        display: block;
+        margin: 50px auto;
+        box-shadow: 0 0 2px black;
+    }
+
+</style>
+<body>
+<div class="calcArea">
+    <div id="origin" class="container">
+        <div class="left-brackets"></div>
+        <div class="number">
+            <input type="number" value="1" placeholder="">
+            <input type="number" value="2" placeholder="">
+            <input type="number" value="3" placeholder="">
+            <input type="number" value="1" placeholder="">
+        </div>
+        <div class="right-brackets"></div>
+    </div>
+
+    <span>*</span>
+
+    <div id="inverse" class="container">
+        <div class="left-brackets"></div>
+        <div class="number">
+            <input type="number" value="" placeholder="" readonly>
+            <input type="number" value="" placeholder="" readonly>
+            <input type="number" value="" placeholder="" readonly>
+            <input type="number" value="" placeholder="" readonly>
+        </div>
+
+        <div class="right-brackets"></div>
+    </div>
+
+    <span>=</span>
+
+    <div id="result" class="container">
+        <div class="left-brackets"></div>
+        <div class="number">
+            <input type="number" value="1" placeholder="">
+            <input type="number" value="0" placeholder="">
+            <input type="number" value="0" placeholder="">
+            <input type="number" value="1" placeholder="">
+        </div>
+        <div class="right-brackets"></div>
+    </div>
+</div>
+
+<canvas id="transform"></canvas>
+
+<script>
+    function InverseMatrix() {
+        this.origin = [];
+        this.result = [];
+        this.inverseData = [];
+        this.canvas = document.getElementById('transform');
+        this.ctx = this.canvas.getContext('2d');
+        this.width = window.innerWidth - 100;
+        this.height = window.innerHeight - 300;
+        this.canvas.width = this.width;
+        this.canvas.height = this.height;
+
+        this.init();
+    }
+
+    InverseMatrix.prototype = {
+        /**
+         * 初始化
+         */
+        init: function () {
+            var originObj = document.getElementById('origin'),
+                resultObj = document.getElementById('result'),
+                self = this;
+            Array.prototype.forEach.call(originObj.children[1].children, function (obj, sub) {
+                obj.oninput = function () {
+                    self.changeOrigin(this, sub);
+                };
+                self.origin.push(obj.value);
+            });
+            Array.prototype.forEach.call(resultObj.children[1].children, function (obj, sub) {
+                obj.oninput = function () {
+                    self.changeResult(this, sub);
+                };
+                self.result.push(obj.value);
+            });
+            this.solution();
+        },
+
+        /**
+         * 绑定原始矩阵数据的修改
+         */
+        changeOrigin: function (obj, sub) {
+            if (obj.value != '' && obj.value != '-') {
+                this.origin[sub] = obj.value;
+                this.solution();
+            }
+        },
+
+        /**
+         * 绑定结果矩阵数据的修改
+         */
+        changeResult: function (obj, sub) {
+            if (obj.value != '' && obj.value != '-') {
+                this.result[sub] = obj.value;
+                this.solution();
+            }
+        },
+
+        /**
+         * 计算逆矩阵并将结果返回写入到页面
+         */
+        solution: function () {
+            var c = (this.origin[0] * this.result[2] - this.result[0] * this.origin[2]) / (this.origin[0] * this.origin[3] - this.origin[1] * this.origin[2]),
+                d = (this.origin[0] * this.result[3] - this.result[1] * this.origin[2]) / (this.origin[0] * this.origin[3] - this.origin[1] * this.origin[2]),
+                a = (this.result[0] - this.origin[1] * c) / this.origin[0],
+                b = (this.result[1] - this.origin[1] * d) / this.origin[0],
+                inverseObj = document.getElementById('inverse'),
+                self = this;
+            this.inverseData = [a, b, c, d];
+            Array.prototype.forEach.call(inverseObj.children[1].children, function (obj, sub) {
+                obj.value = self.inverseData[sub];
+            });
+            this.example();
+        },
+
+        /**
+         * 变换示例
+         */
+        example: function () {
+            this.ctx.clearRect(0, 0, this.width, this.height);
+            this.ctx.beginPath();
+            this.ctx.setTransform(Math.cos(this.origin[0] * Math.PI/180), -Math.sin(this.origin[1] * Math.PI/180), Math.sin(this.origin[2] * Math.PI/180), Math.cos(this.origin[3] * Math.PI/180), this.width * .1, this.height * .5);
+            this.ctx.fillStyle = 'yellow';
+            this.ctx.fillRect(0, 0, 100, 100);
+            this.ctx.fillStyle = 'black';
+            this.ctx.fillText('origin', 25, 50);
+            this.ctx.closePath();
+
+            this.ctx.beginPath();
+            this.ctx.setTransform(Math.cos(this.inverseData[0] * Math.PI/180), -Math.sin(this.inverseData[1] * Math.PI/180), Math.sin(this.inverseData[2] * Math.PI/180), Math.cos(this.inverseData[3] * Math.PI/180), this.width * .5, this.height * .5);
+            this.ctx.fillStyle = 'blue';
+            this.ctx.fillRect(0, 0, 100, 100);
+            this.ctx.fillStyle = 'white';
+            this.ctx.fillText('inverse', 25, 50);
+            this.closePath();
+        }
+    };
+
+    var im = new InverseMatrix();
+</script>
+
+</body>
+</html>
