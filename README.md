@@ -42,7 +42,8 @@
 	[route --- 迷宫自动寻路](https://erdayo.github.io/otherDemo/practical_demo/route.html)  
 	[uploadPreview --- 图片上传预览](https://erdayo.github.io/otherDemo/practical_demo/uploadPreview.html)  
 	[videoTest --- 视频](https://erdayo.github.io/otherDemo/practical_demo/videoTest.html)  
-	[waterfall --- 响应式瀑布流](https://erdayo.github.io/otherDemo/practical_demo/waterfall.html)
+	[waterfall --- 响应式瀑布流](https://erdayo.github.io/otherDemo/practical_demo/waterfall.html)  
+	[landscape --- 横屏测试(始终保持横屏)](https://erdayo.github.io/otherDemo/practical_demo/landscape.html)
 
  
 ## tip: 

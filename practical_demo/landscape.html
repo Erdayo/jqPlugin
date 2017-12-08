@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>横屏</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+</head>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    #stage {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: silver;
+        overflow: hidden;
+    }
+
+    p {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 20%;
+        height: 20%;
+        background: linear-gradient(transparent 10%, seashell 100%);
+        border: 1px solid red;
+        text-align: center;
+        line-height: 2;
+    }
+
+    button {
+        position: absolute;
+        left: 50%;
+        bottom: 10%;
+        width: 10%;
+        height: 10%;
+        transform: translate(-50%, -50%);
+    }
+
+    @media all and (orientation: portrait) {
+        #stage {
+            left: calc((100vw - 100vh) / 2);
+            top: calc((100vh - 100vw) / 2);
+            width: 100vh;
+            height: 100vw;
+            transform: rotate(-90deg);
+        }
+    }
+</style>
+<body>
+
+<!--
+    横屏实验思路:
+        1. 保持页面为横向布局
+        2. 纵向时, 将舞台宽高对换, 并旋转90°, 计算与原始宽高差距偏移回原位
+ -->
+
+<div id="stage">
+    <p>do something....</p>
+    <button>start</button>
+</div>
+
+
+</body>
+</html>
