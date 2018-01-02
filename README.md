@@ -43,8 +43,10 @@
 	[uploadPreview --- 图片上传预览](https://erdayo.github.io/otherDemo/practical_demo/uploadPreview.html)  
 	[videoTest --- 视频](https://erdayo.github.io/otherDemo/practical_demo/videoTest.html)  
 	[waterfall --- 响应式瀑布流](https://erdayo.github.io/otherDemo/practical_demo/waterfall.html)  
-	[landscape --- 横屏测试(始终保持横屏)](https://erdayo.github.io/otherDemo/practical_demo/landscape.html)
+	[landscape --- 横屏测试(始终保持横屏)](https://erdayo.github.io/otherDemo/practical_demo/landscape.html)  
 
+- phaser
+	[sudoku --- 数独](https://erdayo.github.io/otherDemo/phaser/sudoku.html)  
  
 ## tip: 
 bdSearchDemo.html 中 调用的百度 "http://unionsug.baidu.com/su?wd=" 不支持https 访问

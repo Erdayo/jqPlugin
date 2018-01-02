@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    canvas {
+        border: 1px solid black;
+        border-radius: 3px;
+        background: linear-gradient(transparent 50%, black 50%) no-repeat 0 26.5%/ 100% 2px, linear-gradient(transparent 50%, black 50%) no-repeat 0 53.5%/ 100% 2px, linear-gradient(transparent 50%, black 50%) no-repeat 0 80%/ 100% 2px, linear-gradient(90deg, transparent 50%, black 50%) no-repeat 33% 0/ 2px 80%, linear-gradient(90deg, transparent 50%, black 50%) no-repeat 66.5% 0/ 2px 80%;
+    }
+</style>
+<body>
+<h1>单击格子即可填入数字</h1>
+<script src="res/js/phaser.js"></script>
+<script>
+    var game = new Phaser.Game(480, 600, Phaser.AUTO, '', {create: create, update: update}, true),
+        blockList = [],
+        fontStyle = {font: '16px Console', fill: 'black', boundsAlignH: 'center', boundsAlignV: 'middle'},
+        blockSize = 40,
+        blockSpacing = 10,
+        currentSprite,
+        stageSprite,
+        retryBtn,
+        checkBtn,
+        rc = 0,
+        rr = 0,
+        num = [1, 2, 3, 4, 5, 6, 7, 8, 9],
+        numbers = [];
+
+    function create() {
+        stageSprite = game.add.sprite(blockSpacing, blockSpacing);
+        retryBtn = game.add.button((game.width - blockSize * 2) / 2 - 100, game.height * .86, '', resetGame, null);
+        checkBtn = game.add.button((game.width - blockSize * 2) / 2 + 100, game.height * .86, '', checkResult, null);
+        initNum();
+
+        var retryGraphic = game.add.graphics(0, 0),
+            retryText = game.add.text(0, 3, 'reset', fontStyle),
+            checkGraphic = game.add.graphics(0, 0),
+            checkText = game.add.text(0, 3, 'check', fontStyle);
+
+        for (var i = 0; i < 9; i++) {
+            blockList[i] = [];
+            rc = 0;
+            for (var j = 0; j < 9; j++) {
+                blockList[i][j] = {
+                    sprite: game.add.sprite((blockSize + blockSpacing) * i + blockSpacing * rr, (blockSize + blockSpacing) * j + blockSpacing * rc),
+                    spriteGraphic: game.add.graphics(0, 0),
+                    spriteText: game.add.text(0, 4, numbers[i][j].isVisable ? numbers[i][j].value : '', fontStyle)
+                };
+
+                blockList[i][j].spriteGraphic.lineStyle(1, 0x000000);
+                if (numbers[i][j].isVisable) {
+                    blockList[i][j].spriteGraphic.beginFill(0xffffff);
+                    blockList[i][j].spriteText.fill = 'black';
+                } else {
+                    blockList[i][j].spriteGraphic.beginFill(0xe5e2b9);
+                    blockList[i][j].spriteText.fill = 'white';
+                }
+                blockList[i][j].spriteGraphic.drawRoundedRect(0, 0, blockSize, blockSize, 3);
+                blockList[i][j].spriteGraphic.endFill();
+                blockList[i][j].spriteText.setTextBounds(0, 0, blockSize, blockSize);
+                blockList[i][j].sprite.anchor.setTo(.5, .5);
+                blockList[i][j].sprite.inputEnabled = true;
+                blockList[i][j].sprite.events.onInputDown.add(clicked, this);
+
+                blockList[i][j].sprite.addChild(blockList[i][j].spriteGraphic);
+                blockList[i][j].sprite.addChild(blockList[i][j].spriteText);
+
+                stageSprite.addChild(blockList[i][j].sprite);
+                if (j != 0 && j % 3 == 2) {
+                    rc++;
+                }
+            }
+            if (i != 0 && i % 3 == 2) {
+                rr++;
+            }
+        }
+
+        retryGraphic.lineStyle(2, 0x000000);
+        retryGraphic.beginFill(0xffffff);
+        retryGraphic.drawRoundedRect(0, 0, blockSize * 2, blockSize, 10);
+        retryGraphic.endFill();
+        retryText.setTextBounds(0, 0, blockSize * 2, blockSize);
+        retryBtn.addChild(retryGraphic);
+        retryBtn.addChild(retryText);
+
+        checkGraphic.lineStyle(2, 0x000000);
+        checkGraphic.beginFill(0xffffff);
+        checkGraphic.drawRoundedRect(0, 0, blockSize * 2, blockSize, 10);
+        checkGraphic.endFill();
+        checkText.setTextBounds(0, 0, blockSize * 2, blockSize);
+        checkBtn.addChild(checkGraphic);
+        checkBtn.addChild(checkText);
+
+        game.input.keyboard.addCallbacks(this, null, null, keyPress);
+    }
+
+    function update() {
+
+    }
+
+    function keyPress(char) {
+        if (/[0-9]/.test(char) && currentSprite != '') {
+            currentSprite.children[1].setText(char);
+        }
+    }
+
+    function clicked(sprite) {
+        var curGraphic = sprite.children[0],
+            bgColor = curGraphic.graphicsData[0].fillColor;
+
+        if (numbers[Math.floor(sprite.x / 50)][Math.floor(sprite.y / 50)].isVisable) {
+            return;
+        }
+
+        if (currentSprite != sprite && currentSprite) {
+            var prevGraphic = currentSprite.children[0],
+                prevBgColor = prevGraphic.graphicsData[0].fillColor,
+                prevLineColor = prevGraphic.graphicsData[0].lineColor;
+            prevGraphic.lineStyle(1, prevLineColor);
+            prevGraphic.beginFill(prevBgColor);
+            prevGraphic.drawRoundedRect(0, 0, blockSize, blockSize, 3);
+            prevGraphic.endFill();
+        }
+        if (currentSprite != sprite) {
+            curGraphic.lineStyle(1, 0xe5e2b9);
+            curGraphic.beginFill(bgColor);
+            curGraphic.drawRoundedRect(0, 0, blockSize, blockSize, 3);
+            curGraphic.endFill();
+
+            currentSprite = sprite;
+        }
+        currentSprite.children[1].fill = 'white';
+    }
+
+    function initNum() {
+        var tmp_matrix = num.slice(),
+            tmp_row = [],
+            tmp_col = [];
+
+        // 初始化numbers
+        for (var i = 0; i < 9; i++) {
+            numbers[i] = [];
+            tmp_row[i] = [];
+            tmp_col[i] = [];
+            for (var j = 0; j < 9; j++) {
+                numbers[i][j] = {};
+                numbers[i][j].isVisable = false;
+                numbers[i][j].value = 0;
+                tmp_row[i][j] = numbers[i][j].value;
+                tmp_col[i][j] = numbers[i][j].value;
+            }
+        }
+
+        // 随机生成对角线的矩阵
+        var sr = 0, sc = 0;
+        for (var m = 0; m < 3; m++) {
+            tmp_matrix = num.slice();
+            sc = m * 3;
+            sr = m * 3;
+            for (var n = 0; n < 9; n++) {
+                var rnd = Math.floor(Math.random() * tmp_matrix.length);
+                numbers[sr][sc].value = tmp_matrix[rnd];
+                numbers[sr][sc].isVisable = Math.random() > .6;
+                tmp_row[sc][sr] = numbers[sr][sc].value;
+                tmp_col[sr][sc] = numbers[sr][sc].value;
+                tmp_matrix = removeNum(tmp_matrix[rnd], tmp_matrix);
+                sc++;
+                if (n % 3 == 2) {
+                    sr++;
+                    sc = m * 3;
+                }
+            }
+        }
+
+        // 填空
+        for (var count = 0; count < 6; count++) {
+            if (count < 2) {
+                sr = 3 * count + 3;
+                sc = 0;
+            } else if (count >= 2 && count < 4) {
+                sr = 3 * (count - 2) * 2;
+                sc = 3;
+            } else if (count >= 4) {
+                sr = 3 * (count - 4);
+                sc = 6;
+            }
+
+            tmp_matrix = num.slice();
+            var tmp_arr = [];
+            for (n = 0; n < 9; n++) {
+                rnd = Math.floor(Math.random() * tmp_matrix.length);
+                tmp_arr.push({
+                    x: sr,
+                    y: sc,
+                    arr: cloneRepeat(removeRepeat(removeNum(0, tmp_col[sr]), num.slice()), removeRepeat(removeNum(0, tmp_row[sc]), num.slice()))
+                });
+
+                sc++;
+                if (count < 2) {
+                    if (n % 3 == 2) {
+                        sr++;
+                        sc = 0;
+                    }
+                } else if (count >= 2 && count < 4) {
+                    if (n % 3 == 2) {
+                        sr++;
+                        sc = 3;
+                    }
+                } else if (count >= 4) {
+                    if (n % 3 == 2) {
+                        sr++;
+                        sc = 6;
+                    }
+                }
+            }
+
+            tmp_arr.sort(function (a, b) {
+                return a.arr.length - b.arr.length;
+            });
+
+            var curNum = 0;
+            for (var q = 0; q < tmp_arr.length; q++) {
+                rnd = Math.floor(Math.random() * tmp_arr[q].arr.length);
+                curNum = tmp_arr[q].arr[rnd];
+                for (var p = q; p < 9; p++) {
+                    tmp_arr[p].arr = removeNum(curNum, tmp_arr[p].arr);
+                }
+                if (curNum == undefined) {
+                    initNum();
+                    return;
+                }
+                numbers[tmp_arr[q].x][tmp_arr[q].y].value = curNum;
+                numbers[tmp_arr[q].x][tmp_arr[q].y].isVisable = Math.random() > .6;
+                tmp_row[tmp_arr[q].y][tmp_arr[q].x] = curNum;
+                tmp_col[tmp_arr[q].x][tmp_arr[q].y] = curNum;
+            }
+        }
+    }
+
+    function removeNum(num, arr) {
+        var result = [];
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i] != num) {
+                result.push(arr[i]);
+            }
+        }
+        return result;
+    }
+
+    function removeRepeat(repeatNum, arr) {
+        var result = [];
+        repeatNum.sort();
+        for (var i = 0; i < arr.length; i++) {
+            var flag = false;
+            for (var j = 0; j < repeatNum.length; j++) {
+                if (arr[i] == repeatNum[j]) {
+                    flag = true;
+                    break;
+                }
+            }
+            if (!flag) {
+                result.push(arr[i]);
+            }
+        }
+        return result;
+    }
+
+    function cloneRepeat(arr, original) {
+        var result = [];
+        for (var i = 0; i < original.length; i++) {
+            var flag = false;
+            for (var j = 0; j < arr.length; j++) {
+                if (original[i] == arr[j]) {
+                    flag = true;
+                    break;
+                }
+            }
+            if (flag) {
+                result.push(original[i]);
+            }
+        }
+        return result;
+    }
+
+    function resetGame() {
+        initNum();
+        for (var i = 0; i < 9; i++) {
+            for (var j = 0; j < 9; j++) {
+                blockList[i][j].spriteGraphic.lineStyle(1, 0x000000);
+                if (numbers[i][j].isVisable) {
+                    blockList[i][j].spriteGraphic.beginFill(0xffffff);
+                    blockList[i][j].spriteText.fill = 'black';
+                } else {
+                    blockList[i][j].spriteGraphic.beginFill(0xe5e2b9);
+                    blockList[i][j].spriteText.fill = 'white';
+                }
+                blockList[i][j].spriteGraphic.drawRoundedRect(0, 0, blockSize, blockSize, 3);
+                blockList[i][j].spriteGraphic.endFill();
+                numbers[i][j].isVisable ? blockList[i][j].spriteText.setText(numbers[i][j].value) : blockList[i][j].spriteText.setText('');
+            }
+        }
+    }
+
+    function checkResult() {
+        var count = 0,
+            flag = true;
+        for (var i = 0; i < 9; i++) {
+            for (var j = 0; j < 9; j++) {
+                if (parseInt(blockList[i][j].spriteText._text) != numbers[i][j].value) {
+                    count++;
+                    blockList[i][j].spriteText.fill = 'red';
+                }
+                flag = flag && (parseInt(blockList[i][j].spriteText._text) == numbers[i][j].value);
+            }
+        }
+        if (flag) {
+            alert('你赢了,很棒棒哦~~~~~');
+        } else {
+            alert('还有' + count + '个未填/错误的格子~~~~~~');
+        }
+    }
+
+</script>
+</body>
+</html>
