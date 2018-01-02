@@ -45,7 +45,7 @@
 	[waterfall --- 响应式瀑布流](https://erdayo.github.io/otherDemo/practical_demo/waterfall.html)  
 	[landscape --- 横屏测试(始终保持横屏)](https://erdayo.github.io/otherDemo/practical_demo/landscape.html)  
 
-- phaser
+- phaser  
 	[sudoku --- 数独](https://erdayo.github.io/otherDemo/phaser/sudoku.html)  
  
 ## tip: 
