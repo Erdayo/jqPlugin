@@ -47,6 +47,7 @@
 
 - phaser  
 	[sudoku --- 数独](https://erdayo.github.io/otherDemo/phaser/sudoku.html)  
+	[huarongRoad --- 数字华容道](https://erdayo.github.io/otherDemo/phaser/huarongRoad.html)
  
 ## tip: 
 bdSearchDemo.html 中 调用的百度 "http://unionsug.baidu.com/su?wd=" 不支持https 访问

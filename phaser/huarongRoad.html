@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>数字华容道</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+</head>
+<style>
+    @media screen and (max-width: 450px) {
+        * {
+            margin: 0;
+            padding: 0;
+        }
+    }
+
+</style>
+<body>
+<h1>方向键控制</h1>
+<script src="res/js/phaser.min.js"></script>
+<script>
+    var width = window.innerWidth >= 360 ? 360 : window.innerWidth,
+        height = width * 1.6,
+        game = new Phaser.Game(width, height, Phaser.AUTO, '', {create: create, update: update}),
+        blockList = {},
+        numbers = [],
+        size = 4,
+        startX = width * .05,
+        startY = width * .1,
+        blockSize = (width * .9) / size,
+        fontStyle = {fontSize: '16px', font: 'Console', fill: 'black', boundsAlignH: 'center', boundsAlignV: 'middle'},
+        flag = false,
+        btnAgain,
+//        btnStart,
+//        lblTimer,
+        cursors;
+
+    function create() {
+        var againGraphic = game.add.graphics(0, 0),
+            againText = game.add.text(0, 4, 'Try Again', fontStyle),
+            startGraphic = game.add.graphics(0, 0),
+            startText = game.add.text(0, 4, 'start', fontStyle);
+        btnAgain = game.add.button(width * .3, height * .8, '', initBlock, null);
+        againGraphic.beginFill(0x999999);
+        againGraphic.drawRoundedRect(0, 0, blockSize * 1.6, blockSize * .6, blockSize * .3);
+        againGraphic.endFill();
+        againText.setTextBounds(0, 0, blockSize * 1.6, blockSize * .6);
+        btnAgain.addChild(againGraphic);
+        btnAgain.addChild(againText);
+
+//        btnStart = game.add.button(width * .1, height * .85, '', startGame, null);
+//        startGraphic.beginFill(0x999999);
+//        startGraphic.drawRoundedRect(0, 0, blockSize * 1.6, blockSize * .6, blockSize * .3);
+//        startGraphic.endFill();
+//        startText.setTextBounds(0, 0, blockSize * 1.6, blockSize * .6);
+//        btnStart.addChild(startGraphic);
+//        btnStart.addChild(startText);
+
+        for (var i = 0; i < Math.pow(size, 2); i++) {
+            numbers.push(i + 1);
+        }
+
+        initBlock();
+        startGame();
+    }
+
+    function startGame() {
+        cursors = game.input.keyboard.createCursorKeys();
+    }
+
+    function initBlock() {
+        var tmp = numbers.slice();
+        for (var row = 0; row < 4; row++) {
+            for (var col = 0; col < 4; col++) {
+                var rnd = Math.floor(Math.random() * tmp.length),
+//                    rnd = row + size * col,
+                    sprite = game.add.sprite(blockSize * row + startX, blockSize * col + startY),
+                    spriteGraphic = game.add.graphics(0, 0),
+                    spriteText = game.add.text(0, 4, tmp[rnd], fontStyle);
+
+                if (tmp[rnd] == 16) {
+                    spriteGraphic.beginFill();
+                    spriteText.setText('');
+                } else {
+                    spriteGraphic.beginFill(0xcccccc);
+                }
+                spriteGraphic.drawRect(0, 0, blockSize - 1, blockSize - 1);
+                spriteGraphic.endFill();
+                spriteText.setTextBounds(0, 0, blockSize - 1, blockSize - 1);
+                sprite.addChild(spriteGraphic);
+                sprite.addChild(spriteText);
+                blockList[tmp[rnd]] = {x: row, y: col, sprite: sprite};
+                tmp = removeNum(tmp[rnd], tmp);
+            }
+        }
+    }
+
+    function update() {
+        if (!cursors) {
+            return;
+        }
+        if (cursors.up.isDown && !flag) {
+            flag = true;
+            doUp();
+        } else if (cursors.down.isDown && !flag) {
+            flag = true;
+            doDown();
+        } else if (cursors.left.isDown && !flag) {
+            flag = true;
+            doLeft();
+        } else if (cursors.right.isDown && !flag) {
+            flag = true;
+            doRight();
+        }
+
+        if ((cursors.up.isUp && flag) && (cursors.down.isUp && flag) && (cursors.left.isUp && flag) && (cursors.right.isUp && flag)) {
+            flag = false;
+            checkResult();
+        }
+    }
+
+    function removeNum(num, arr) {
+        var result = [];
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i] != num) {
+                result.push(arr[i]);
+            }
+        }
+        return result;
+    }
+
+    function placeBlock(x, y, target) {
+        var sprite = game.add.sprite(startX + blockSize * x, startY + blockSize * y),
+            spriteGraphic = game.add.graphics(0, 0),
+            spriteText = game.add.text(0, 4, target, fontStyle);
+        if (target == 16) {
+            spriteGraphic.beginFill();
+        } else {
+            spriteGraphic.beginFill(0xcccccc);
+        }
+        spriteGraphic.drawRect(0, 0, blockSize - 1, blockSize - 1);
+        spriteGraphic.endFill();
+        spriteText.setTextBounds(0, 0, blockSize - 1, blockSize - 1);
+        sprite.addChild(spriteGraphic);
+        sprite.addChild(spriteText);
+
+        blockList[target].x = x;
+        blockList[target].y = y;
+        blockList[target].sprite = sprite;
+    }
+
+    function doUp() {
+        var pos = [blockList[16].x, blockList[16].y],
+            target;
+        if (blockList[16].y == 3) {
+            return;
+        }
+        for (var key in blockList) {
+            if (blockList[key].x == blockList[16].x && blockList[key].y == blockList[16].y + 1) {
+                target = key;
+            }
+        }
+        placeBlock(pos[0], pos[1], ~~target);
+        placeBlock(pos[0], pos[1] + 1, 16);
+    }
+
+    function doLeft() {
+        var pos = [blockList[16].x, blockList[16].y],
+            target;
+        if (blockList[16].x == 3) {
+            return;
+        }
+        for (var key in blockList) {
+            if (blockList[key].x == blockList[16].x + 1 && blockList[key].y == blockList[16].y) {
+                target = key;
+            }
+        }
+        placeBlock(pos[0], pos[1], ~~target);
+        placeBlock(pos[0] + 1, pos[1], 16);
+    }
+
+    function doDown() {
+        var pos = [blockList[16].x, blockList[16].y],
+            target;
+        if (blockList[16].y == 0) {
+            return;
+        }
+        for (var key in blockList) {
+            if (blockList[key].x == blockList[16].x && blockList[key].y == blockList[16].y - 1) {
+                target = key;
+            }
+        }
+        placeBlock(pos[0], pos[1], ~~target);
+        placeBlock(pos[0], pos[1] - 1, 16);
+    }
+
+    function doRight() {
+        var pos = [blockList[16].x, blockList[16].y],
+            target;
+        if (blockList[16].x == 0) {
+            return;
+        }
+        for (var key in blockList) {
+            if (blockList[key].x == blockList[16].x - 1 && blockList[key].y == blockList[16].y) {
+                target = key;
+            }
+        }
+        placeBlock(pos[0], pos[1], ~~target);
+        placeBlock(pos[0] - 1, pos[1], 16);
+    }
+
+    function checkResult() {
+        var x = 0, y = 0, over = true;
+        for (var key in blockList) {
+            over = over && (blockList[key].x == x && blockList[key].y == y);
+            x++;
+            if (parseInt(key) % size == 0 && parseInt(key) != 1) {
+                y++;
+                x = 0;
+            }
+        }
+        if (over) {
+            alert('congratulation~~~~');
+        }
+    }
+
+
+</script>
+</body>
+</html>
