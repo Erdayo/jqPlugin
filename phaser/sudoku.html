@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>数独</title>
     <meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 </head>
 <style>
@@ -23,10 +23,7 @@
 <script>
     var width = window.innerWidth - 2 >= 480 ? 480 : window.innerWidth - 2,
         height = width * 1.25,
-        game = new Phaser.Game(width, height, Phaser.AUTO, '', {
-            create: create,
-            update: update
-        }, true),
+        game = new Phaser.Game(width, height, Phaser.AUTO, '', {create: create, update: update}, true),
         blockList = [],
         fontStyle = {font: '16px Console', fill: 'black', boundsAlignH: 'center', boundsAlignV: 'middle'},
         blockSize = parseInt(width / 12),
@@ -120,16 +117,15 @@
 
     function clicked(sprite) {
         var curGraphic = sprite.children[0],
-            bgColor = curGraphic.graphicsData[0].fillColor;
+            bgColor = curGraphic.graphicsData[curGraphic.graphicsData.length - 1].fillColor;
 
         if (numbers[Math.floor(sprite.x / 50)][Math.floor(sprite.y / 50)].isVisable) {
             return;
         }
-
         if (currentSprite != sprite && currentSprite) {
             var prevGraphic = currentSprite.children[0],
-                prevBgColor = prevGraphic.graphicsData[0].fillColor,
-                prevLineColor = prevGraphic.graphicsData[0].lineColor;
+                prevBgColor = prevGraphic.graphicsData[prevGraphic.graphicsData.length - 2].fillColor,
+                prevLineColor = prevGraphic.graphicsData[prevGraphic.graphicsData.length - 2].lineColor;
             prevGraphic.lineStyle(1, prevLineColor);
             prevGraphic.beginFill(prevBgColor);
             prevGraphic.drawRoundedRect(0, 0, blockSize, blockSize, 3);
@@ -150,6 +146,7 @@
         var tmp_matrix = num.slice(),
             tmp_row = [],
             tmp_col = [];
+        currentSprite = '';
 
         // 初始化numbers
         for (var i = 0; i < 9; i++) {
