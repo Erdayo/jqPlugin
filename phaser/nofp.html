@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>数图迷阵</title>
+</head>
+<body>
+<div>
+    <p>规则：</p>
+    <p>如图所示，在10乘10的格子，横排竖排所标的数字都有意义，比如9意味着竖排9个格子要涂成黑色；并列的5和1意味着连续5个格子要涂成黑色，中间间隔至少1个格子，还有一个地方要涂黑。</p>
+    <img src="http://i.shangc.net/2018/0302/20180302102305203.jpg">
+    <p>横列竖列都要产生关联，即要同时满足横排和竖排格子涂黑的条件。最终纵横交错，可以拼成某一个数字，即选手A所要破译的密码信息。另外拼成数字的小黑块中还有卧底，混进了干扰项。</p>
+    <p>CHECK时，标绿的代表错误</p>
+    <hr>
+</div>
+<p>请输入答案：<input type="number" placeholder="">
+    <button>检验结果</button>
+</p>
+
+<script src="res/js/phaser.js"></script>
+<script>
+    var game = new Phaser.Game(800, 800, Phaser.AUTO, '', {create: create}),
+        map = [],
+        texts = [],
+        color = 0xcccccc,
+        disturb = 0xcccccc,
+        clickColor = 0xf0f000,
+        errorColor = 0x00ff00,
+        fStyle = {font: '16px Console', fill: 'white', boundsAlignH: 'center', boundsAlignV: 'bottom'},
+        fStyle2 = {font: '16px Console', fill: 'white', boundsAlignH: 'right', boundsAlignV: 'middle'},
+        fStyle3 = {font: '16px Console', fill: 'white', boundsAlignH: 'center', boundsAlignV: 'middle'},
+        btnRetry,
+        btnCheck,
+        number;
+    function create() {
+        for (var i = 0; i < 10; i++) {
+            map[i] = [];
+            for (var j = 0; j < 10; j++) {
+                var sprite = game.add.sprite(i * 50 + 150, j * 50 + 150),
+                    graphic = game.add.graphics(0, 0);
+
+                graphic.lineStyle(1, 0xffffff);
+                graphic.beginFill(0xcccccc);
+                graphic.drawRect(0, 0, 50, 50);
+                graphic.endFill();
+
+                sprite.addChild(graphic);
+                sprite.inputEnabled = true;
+                sprite.events.onInputDown.add(clicked, this);
+                map[i][j] = {sprite: sprite, graphic: graphic, isDraw: false, isClick: false};
+            }
+        }
+
+        btnRetry = game.add.button(280, 700, '', initGame, null);
+        var retryGraphic = game.add.graphics(0, 0),
+            retryText = game.add.text(0, 3, 'RETRY', fStyle3);
+        retryGraphic.lineStyle(2, 0x00ff00);
+        retryGraphic.beginFill(0x333333);
+        retryGraphic.drawRoundedRect(0, 0, 100, 60, 5);
+        retryGraphic.endFill();
+        retryText.setTextBounds(0, 0, 100, 60);
+        btnRetry.addChild(retryGraphic);
+        btnRetry.addChild(retryText);
+
+        btnCheck = game.add.button(400, 700, '', checkGame, null);
+        var checkGraphic = game.add.graphics(0, 0),
+            checkText = game.add.text(0, 3, 'CHECK', fStyle3);
+        checkGraphic.lineStyle(2, 0xf000f0);
+        checkGraphic.beginFill(0x333333);
+        checkGraphic.drawRoundedRect(0, 0, 100, 60, 5);
+        checkGraphic.endFill();
+        checkText.setTextBounds(0, 0, 100, 60);
+        btnCheck.addChild(checkGraphic);
+        btnCheck.addChild(checkText);
+
+        initGame();
+    }
+
+    /**
+     * @method initGame - 生成格子，并绘制目标图案
+     **/
+    function initGame() {
+        // 初始化信息
+        for (var i = 0; i < 10; i++) {
+            for (var j = 0; j < 10; j++) {
+                map[i][j].graphic.lineStyle(1, 0xffffff);
+                map[i][j].graphic.beginFill(0xcccccc);
+                map[i][j].graphic.drawRect(0, 0, 50, 50);
+                map[i][j].graphic.endFill();
+                map[i][j].isDraw = false;
+                map[i][j].isClick = false;
+            }
+        }
+
+        for (var z = 0; z < texts.length; z++) {
+            texts[z].setText('');
+        }
+
+        var num1 = generatorNum(),
+            num2 = generatorNum(),
+            pos1 = [Math.floor(Math.random() * 3), Math.floor(Math.random() * 6)],
+            pos2 = [Math.floor(Math.random() * 2) + 6, Math.floor(Math.random() * 6)];
+        while (num1 == 0) {
+            num1 = generatorNum();
+        }
+
+        drawNumber(num1, pos1[0], pos1[1]);
+        drawNumber(num2, pos2[0], pos2[1]);
+//        console.log(num1, num2);
+
+        // 生成干扰信息
+        for (i = 0; i < 10; i++) {
+            for (j = 0; j < 10; j++) {
+                var tmp = Math.random(),
+                    nw1 = num1 == 1 ? 0 : 2,
+                    nw2 = num2 == 1 ? 0 : 2,
+                    nh = 4;
+                if (map[i][j].isDraw) {
+                    continue;
+                }
+                if (tmp > .7 && ((i < pos1[0] || (i > pos1[0] + nw1 && i < pos2[0]) || i > pos2[0] + nw2) || (((j < pos1[1] || j > pos1[1] + nh) && i < 5) || ((j < pos2[1] || j > pos2[1] + nh) && i >= 5)))) {
+                    map[i][j].graphic.lineStyle(1, 0xffffff);
+                    map[i][j].graphic.beginFill(disturb);
+                    map[i][j].graphic.drawRect(0, 0, 50, 50);
+                    map[i][j].graphic.endFill();
+                    map[i][j].isDraw = true;
+                }
+            }
+        }
+
+        // 获取行信息
+        var row, col;
+        for (row = 0; row < 10; row++) {
+            var calcCol = 0,
+                calcRow = 0,
+                resultRow = [],
+                resultCol = [];
+            resultCol[calcCol] = 0;
+            resultRow[calcRow] = 0;
+            for (col = 0; col < 10; col++) {
+                if (col > 0) {
+                    if (!map[row][col - 1].isDraw && map[row][col].isDraw && resultCol[calcCol] != 0) {
+                        calcCol++;
+                        resultCol[calcCol] = 0;
+                    }
+
+                    if (!map[col - 1][row].isDraw && map[col][row].isDraw && resultRow[calcRow] != 0) {
+                        calcRow++;
+                        resultRow[calcRow] = 0;
+                    }
+                }
+
+                if (map[row][col].isDraw) {
+                    resultCol[calcCol]++;
+                }
+
+                if (map[col][row].isDraw) {
+                    resultRow[calcRow]++;
+                }
+            }
+            var text1 = game.add.text(row * 50 + 150, 90, resultCol.join('\n'), fStyle);
+            text1.setTextBounds(0, 0, 50, 50);
+            var text2 = game.add.text(80, row * 50 + 150, resultRow.join(' '), fStyle2);
+            text2.setTextBounds(0, 0, 50, 50);
+
+            texts.push(text1, text2);
+        }
+
+        document.getElementsByTagName('button')[0].onclick = function () {
+            if (document.getElementsByTagName('input')[0].value == num1.toString() + num2.toString()) {
+                alert('Success!');
+            }else {
+                alert('Try again!');
+            }
+        }
+    }
+
+    /**
+     * @method generatorNum - 随机生成一个数字
+     **/
+    function generatorNum() {
+        return Math.floor(Math.random() * 10);
+    }
+
+    /**
+     * @method clicked - 处理点击的对象
+     * @param {object} [obj] - 当前点击的对象
+     **/
+    function clicked(obj) {
+        var pos = [(obj.x - 150) / 50, (obj.y - 150) / 50];
+        if (!map[pos[0]][pos[1]].isClick) {
+            map[pos[0]][pos[1]].graphic.lineStyle(1, 0xffffff);
+            map[pos[0]][pos[1]].graphic.beginFill(clickColor);
+            map[pos[0]][pos[1]].graphic.drawRect(0, 0, 50, 50);
+            map[pos[0]][pos[1]].graphic.endFill();
+            map[pos[0]][pos[1]].isClick = true;
+        } else {
+            map[pos[0]][pos[1]].graphic.lineStyle(1, 0xffffff);
+            map[pos[0]][pos[1]].graphic.beginFill(color);
+            map[pos[0]][pos[1]].graphic.drawRect(0, 0, 50, 50);
+            map[pos[0]][pos[1]].graphic.endFill();
+            map[pos[0]][pos[1]].isClick = false;
+        }
+    }
+
+    /**
+     * @method drawNumber - 绘制数字
+     * @param {number} [number] - 绘制的数字
+     * @param {number} [startX] - 起始坐标 x
+     * @param {number} [startY] - 起始坐标 y
+     **/
+    function drawNumber(number, startX, startY) {
+        var i, j;
+        switch (number) {
+            case 0:
+                for (i = startX; i < startX + 3; i++) {
+                    for (j = startY; j < startY + 5; j++) {
+                        if (i == startX + 1 && (j > startY && j < startY + 4)) {
+                            continue;
+                        }
+                        map[i][j].graphic.lineStyle(1, 0xffffff);
+                        map[i][j].graphic.beginFill(color);
+                        map[i][j].graphic.drawRect(0, 0, 50, 50);
+                        map[i][j].graphic.endFill();
+                        map[i][j].isDraw = true;
+                    }
+                }
+                break;
+            case 1:
+                for (j = startY; j < startY + 5; j++) {
+                    map[startX][j].graphic.lineStyle(1, 0xffffff);
+                    map[startX][j].graphic.beginFill(color);
+                    map[startX][j].graphic.drawRect(0, 0, 50, 50);
+                    map[startX][j].graphic.endFill();
+                    map[startX][j].isDraw = true;
+                }
+                break;
+            case 2:
+                for (i = startX; i < startX + 3; i++) {
+                    for (j = startY; j < startY + 5; j++) {
+                        if ((i < startX + 2 && j == startY + 1) || (i >= startX + 1 && j == startY + 3)) {
+                            continue;
+                        }
+                        map[i][j].graphic.lineStyle(1, 0xffffff);
+                        map[i][j].graphic.beginFill(color);
+                        map[i][j].graphic.drawRect(0, 0, 50, 50);
+                        map[i][j].graphic.endFill();
+                        map[i][j].isDraw = true;
+                    }
+                }
+                break;
+            case 3:
+                for (i = startX; i < startX + 3; i++) {
+                    for (j = startY; j < startY + 5; j++) {
+                        if (i < startX + 2 && ( j == startY + 1 || j == startY + 3)) {
+                            continue;
+                        }
+                        map[i][j].graphic.lineStyle(1, 0xffffff);
+                        map[i][j].graphic.beginFill(color);
+                        map[i][j].graphic.drawRect(0, 0, 50, 50);
+                        map[i][j].graphic.endFill();
+                        map[i][j].isDraw = true;
+                    }
+                }
+                break;
+            case 4:
+                for (i = startX; i < startX + 3; i++) {
+                    for (j = startY; j < startY + 5; j++) {
+                        if ((i > startX && j == startY) || (i == startX + 1 && j == startY + 1) || (i < startX + 2 && j > startY + 2)) {
+                            continue;
+                        }
+                        map[i][j].graphic.lineStyle(1, 0xffffff);
+                        map[i][j].graphic.beginFill(color);
+                        map[i][j].graphic.drawRect(0, 0, 50, 50);
+                        map[i][j].graphic.endFill();
+                        map[i][j].isDraw = true;
+                    }
+                }
+                break;
+            case 5:
+                for (i = startX; i < startX + 3; i++) {
+                    for (j = startY; j < startY + 5; j++) {
+                        if ((i > startX && j == startY + 1) || (i < startX + 2 && j == startY + 3)) {
+                            continue;
+                        }
+                        map[i][j].graphic.lineStyle(1, 0xffffff);
+                        map[i][j].graphic.beginFill(color);
+                        map[i][j].graphic.drawRect(0, 0, 50, 50);
+                        map[i][j].graphic.endFill();
+                        map[i][j].isDraw = true;
+                    }
+                }
+                break;
+            case 6:
+                for (i = startX; i < startX + 3; i++) {
+                    for (j = startY; j < startY + 5; j++) {
+                        if ((i > startX && j == startY + 1) || (i == startX + 1 && j == startY + 3)) {
+                            continue;
+                        }
+                        map[i][j].graphic.lineStyle(1, 0xffffff);
+                        map[i][j].graphic.beginFill(color);
+                        map[i][j].graphic.drawRect(0, 0, 50, 50);
+                        map[i][j].graphic.endFill();
+                        map[i][j].isDraw = true;
+                    }
+                }
+                break;
+            case 7:
+                for (i = startX; i < startX + 3; i++) {
+                    for (j = startY; j < startY + 5; j++) {
+                        if (i <= startX + 1 && j > startY) {
+                            continue;
+                        }
+                        map[i][j].graphic.lineStyle(1, 0xffffff);
+                        map[i][j].graphic.beginFill(color);
+                        map[i][j].graphic.drawRect(0, 0, 50, 50);
+                        map[i][j].graphic.endFill();
+                        map[i][j].isDraw = true;
+                    }
+                }
+                break;
+            case 8:
+                for (i = startX; i < startX + 3; i++) {
+                    for (j = startY; j < startY + 5; j++) {
+                        if (i == startX + 1 && (j == startY + 1 || j == startY + 3)) {
+                            continue;
+                        }
+                        map[i][j].graphic.lineStyle(1, 0xffffff);
+                        map[i][j].graphic.beginFill(color);
+                        map[i][j].graphic.drawRect(0, 0, 50, 50);
+                        map[i][j].graphic.endFill();
+                        map[i][j].isDraw = true;
+                    }
+                }
+                break;
+            case 9:
+                for (i = startX; i < startX + 3; i++) {
+                    for (j = startY; j < startY + 5; j++) {
+                        if ((i == startX + 1 && j == startY + 1) || ( i < startX + 2 && j == startY + 3)) {
+                            continue;
+                        }
+                        map[i][j].graphic.lineStyle(1, 0xffffff);
+                        map[i][j].graphic.beginFill(color);
+                        map[i][j].graphic.drawRect(0, 0, 50, 50);
+                        map[i][j].graphic.endFill();
+                        map[i][j].isDraw = true;
+                    }
+                }
+                break;
+            default:
+                console.log(number + ' is not number');
+        }
+    }
+
+    /**
+     * @method checkGame - 检测当前是否有绘制错误
+     **/
+    function checkGame() {
+        for (var i = 0; i < 10; i++) {
+            for (var j = 0; j < 10; j++) {
+                if (map[i][j].isClick && !map[i][j].isDraw) {
+                    map[i][j].graphic.lineStyle(1, 0xffffff);
+                    map[i][j].graphic.beginFill(errorColor);
+                    map[i][j].graphic.drawRect(0, 0, 50, 50);
+                    map[i][j].graphic.endFill();
+                }
+            }
+        }
+    }
+
+</script>
+</body>
+</html>
