@@ -49,6 +49,9 @@
 	[sudoku --- 数独](https://erdayo.github.io/otherDemo/phaser/sudoku.html)  
 	[huarongRoad --- 数字华容道](https://erdayo.github.io/otherDemo/phaser/huarongRoad.html)  
 	[nofp --- 数图迷阵](https://erdayo.github.io/otherDemo/phaser/nofp.html)
+
+- customPlayer  
+	[player --- 音乐播放器](https://erdayo.github.io/otherDemo/customPlayer/player.html)
  
 ## tip: 
 bdSearchDemo.html 中 调用的百度 "http://unionsug.baidu.com/su?wd=" 不支持https 访问
