@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>扫雷</title>
+</head>
+<body>
+
+<script src="res/js/phaser.min.js"></script>
+<script>
+    var game = new Phaser.Game(800, 600, Phaser.AUTO, '', {preload: preload, create: create}),
+        row = 25,
+        col = 15,
+        size = 30,
+        mines = [],
+        typeList = {
+            bomb: '',
+            flag: '',
+            question: '',
+            0: '',
+            1: '',
+            2: '',
+            3: '',
+            4: '',
+            5: '',
+            6: '',
+            7: '',
+            8: '',
+            9: '',
+            '': ''
+        },
+        colorList = {
+            1: 0x49b4b4,
+            2: 0x4db574,
+            3: 0x78b450,
+            4: 0xc4c362,
+            5: 0xcea346,
+            6: 0xdd8758,
+            7: 0xbf71b3,
+            8: 0x9f71bf,
+            9: 0x7183bf,
+            '': 0x000000,
+            'bomb': 0x000000,
+            'flag': 0x71bfaf,
+            'question': 0xff7c80
+        },
+        typeStr = '',
+        reg = /[0-9]/,
+        borderList = [],
+        bombList = [],
+        flagText,
+        flagCount = 0;
+
+    function preload() {
+        game.load.bitmapFont('font', 'res/font/mine.png', 'res/font/mine.fnt');
+        for (var key in typeList) {
+            typeStr += typeList[key];
+        }
+    }
+
+    function create() {
+        var btnRetry = game.add.button((game.width - 150) / 2, game.height * .89, '', initGame, null),
+            btnGraphic = game.add.graphics(0, 0),
+            btnText = game.add.text(0, 4, 'RETRY', {
+                fontSize: '16px',
+                fill: 'black',
+                boundsAlignH: 'center',
+                boundsAlignV: 'middle'
+            });
+
+        btnGraphic.beginFill(0xcccccc);
+        btnGraphic.drawRoundedRect(0, 0, 150, 50, 3);
+        btnGraphic.endFill();
+        btnText.setTextBounds(0, 0, 150, 50);
+        btnRetry.addChild(btnGraphic);
+        btnRetry.addChild(btnText);
+
+        var flagGraphic = game.add.graphics(10, 10);
+        flagGraphic.lineStyle(2, 0xffffff, .6);
+        flagGraphic.beginFill(0x333333);
+        flagGraphic.drawRoundedRect(0, 0, 100, 30, 3);
+        flagGraphic.endFill();
+        flagText = game.add.bitmapText(55, 16, 'font', typeStr, 16);
+//        flagText.setText(typeList['0'] + typeList['0'] + typeList['0']);
+        flagText.tint = 0xff0000;
+
+        initGame();
+    }
+
+    function initGame() {
+        bombList = [];
+        for (var m = 0; m < row; m++) {
+            mines[m] = [];
+            for (var n = 0; n < col; n++) {
+                var sprite = game.add.sprite(m * size + m + 11, n * size + n + 51),
+                    graphic = game.add.graphics(0, 0),
+                    fontSize = 22,
+                    text = game.add.bitmapText((size - fontSize) / 2, (size - fontSize) / 2, 'font', typeStr, fontSize),
+                    str = '';
+                graphic.beginFill(0xcccccc);
+                graphic.drawRect(0, 0, size, size);
+                graphic.endFill();
+                if (Math.random() > .85) {
+                    str = 'bomb';
+                    bombList.push([m, n]);
+                }
+                text.text = '';
+                text.tint = colorList[str];
+                sprite.addChild(graphic);
+                sprite.addChild(text);
+                sprite.pos = {x: m, y: n};
+                sprite.inputEnabled = true;
+                sprite.events.onInputDown.add(click, this);
+                mines[m].push({
+                    sprite: sprite,
+                    graphic: graphic,
+                    text: text,
+                    value: str,
+                    isClicked: false,
+                    isFlag: false,
+                    isQ: false
+                });
+            }
+        }
+
+        flagCount = bombList.length.toString();
+        flagText.setText(typeList['0'] + typeList[flagCount[0]] + typeList[flagCount[1]]);
+
+        for (var r = 0; r < row; r++) {
+            for (var c = 0; c < col; c++) {
+                var count = findBomb(r, c);
+                if (mines[r][c].value == '' && count != 0) {
+                    mines[r][c].value = count;
+//                    mines[r][c].text.setText(typeList[count]);
+//                    mines[r][c].text.tint = colorList[count];
+                }
+            }
+        }
+    }
+
+    function findBomb(x, y) {
+        var count = 0;
+        for (var i = x - 1; i <= x + 1; i++) {
+            if (mines[i] == undefined) continue;
+            for (var j = y - 1; j <= y + 1; j++) {
+                if (mines[i][j] == undefined || (i == x && j == y)) continue;
+                if (mines[i][j].value == 'bomb') {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    function click() {
+        var pos = arguments[0].pos,
+            obj = mines[pos.x][pos.y];
+        if (event.which == 1) {
+            borderList = [];
+            if (obj.value == 'bomb') {
+                updateShow(pos.x, pos.y, '0xff0000');
+                gameOver();
+            } else {
+                updateShow(pos.x, pos.y);
+                findEmpty(pos.x, pos.y);
+            }
+        }
+        if (event.which == 3) {
+            if (!obj.isFlag && !obj.isQ) {
+                obj.isFlag = true;
+                obj.isQ = false;
+                updateShow(pos.x, pos.y);
+                flagCount = (parseInt(flagCount) - 1).toString();
+                var tmp = typeList['0'];
+                for (var i = 0; i < flagCount.length; i++){
+                    tmp += typeList[flagCount[i]];
+                }
+                flagText.text = tmp;
+
+            } else if (obj.isFlag) {
+                obj.isQ = true;
+                obj.isFlag = false;
+                updateShow(pos.x, pos.y);
+                flagCount = (parseInt(flagCount) + 1).toString();
+                flagText.setText(typeList['0'] + typeList[flagCount[0]] + typeList[flagCount[1]]);
+            } else if (obj.isQ) {
+                obj.isQ = false;
+                removeShow(pos.x, pos.y);
+            }
+        }
+    }
+
+    function findEmpty(x, y) {
+        doUp(x, y);
+        doDown(x, y);
+        checkCorner();
+    }
+
+    function doUp(x, y) {
+        while (y >= 0) {
+            if (mines[x][y].value == '' || reg.test(mines[x][y].value)) {
+                doLeft(x, y);
+                doRight(x, y);
+            }
+            if (reg.test(mines[x][y].value)) {
+                break;
+            }
+            y--;
+        }
+    }
+
+    function doDown(x, y) {
+        while (y < col) {
+            if (mines[x][y].value == '' || reg.test(mines[x][y].value)) {
+                doLeft(x, y);
+                doRight(x, y);
+            }
+            if (reg.test(mines[x][y].value)) {
+                break;
+            }
+            y++;
+        }
+    }
+
+    function doLeft(x, y) {
+        while (x >= 0) {
+            if (mines[x][y].value == '') {
+                updateShow(x, y);
+                if (y - 1 >= 0) {
+                    if (reg.test(mines[x][y - 1].value)) {
+                        updateShow(x, y - 1);
+                        borderList = handlerArr(borderList, [x, y - 1]);
+                    }
+                    if (mines[x][y - 1].value == '' && !mines[x][y - 1].isClicked) {
+                        doUp(x, y - 1);
+                    }
+                }
+                if (y + 1 < col) {
+                    if (reg.test(mines[x][y + 1].value)) {
+                        updateShow(x, y + 1);
+                        borderList = handlerArr(borderList, [x, y + 1]);
+                    }
+                    if (mines[x][y + 1].value == '' && !mines[x][y + 1].isClicked) {
+                        doDown(x, y + 1);
+                    }
+                }
+            }
+            if (reg.test(mines[x][y].value)) {
+                updateShow(x, y);
+                if (x + 1 < row && x - 1 >= 0) {
+                    if (mines[x + 1][y].value == '' && !mines[x + 1][y].isClicked) {
+                        doUp(x + 1, y);
+                        doDown(x + 1, y);
+                    }
+                }
+                if (y + 1 < col && y - 1 >= 0) {
+                    if (mines[x][y + 1].value == '' && !mines[x][y + 1].isClicked) {
+                        doUp(x, y + 1);
+                        doDown(x, y + 1);
+                    }
+                    if (mines[x][y - 1].value == '' && !mines[x][y - 1].isClicked) {
+                        doUp(x, y - 1);
+                        doDown(x, y - 1);
+                    }
+                }
+                borderList = handlerArr(borderList, [x, y]);
+                break;
+            }
+            x--;
+        }
+    }
+
+    function doRight(x, y) {
+        while (x < row) {
+            if (mines[x][y].value == '') {
+                updateShow(x, y, '', 'rs');
+                if (y - 1 >= 0) {
+                    if (reg.test(mines[x][y - 1].value)) {
+                        updateShow(x, y - 1);
+                        borderList = handlerArr(borderList, [x, y - 1]);
+                    }
+                    if (mines[x][y - 1].value == '' && !mines[x][y - 1].isClicked) {
+                        doUp(x, y - 1);
+                    }
+                }
+                if (y + 1 < col) {
+                    if (reg.test(mines[x][y + 1].value)) {
+                        updateShow(x, y + 1);
+                        borderList = handlerArr(borderList, [x, y + 1]);
+                    }
+                    if (mines[x][y + 1].value == '' && !mines[x][y + 1].isClicked) {
+                        doDown(x, y + 1);
+                    }
+                }
+            }
+            if (reg.test(mines[x][y].value)) {
+                updateShow(x, y);
+                borderList = handlerArr(borderList, [x, y]);
+                if (x + 1 < row && x - 1 >= 0) {
+                    if (mines[x - 1][y].value == '' && !mines[x - 1][y].isClicked) {
+                        doUp(x - 1, y);
+                        doDown(x - 1, y);
+                    }
+                }
+                break;
+            }
+            x++;
+        }
+    }
+
+    function checkCorner() {
+        for (var i = 0; i < borderList.length; i++) {
+            for (var j = i; j < borderList.length; j++) {
+                var tmpPos = [borderList[i][0], borderList[i][1]],
+                    tmpPos2 = [borderList[j][0], borderList[j][1]];
+                if (Math.abs(tmpPos[0] - tmpPos2[0]) == 1 && Math.abs(tmpPos[1] - tmpPos2[1]) == 1) {
+                    if (tmpPos[0] - 1 >= 0) {
+                        if (mines[tmpPos[0] - 1][tmpPos[1]].value != 'bomb') {
+                            updateShow(tmpPos[0] - 1, tmpPos[1]);
+                        }
+                    }
+                    if (tmpPos[0] + 1 < row) {
+                        if (mines[tmpPos[0] + 1][tmpPos[1]].value != 'bomb') {
+                            updateShow(tmpPos[0] + 1, tmpPos[1]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    function handlerArr(arr, ele) {
+        var result = arr.slice(),
+            flag = false;
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i][0] == ele[0] && arr[i][1] == ele[1]) {
+                flag = true;
+            }
+        }
+        if (!flag) {
+            result.push(ele);
+        }
+        return result;
+    }
+
+    function updateShow(x, y, color) {
+        color = color || 0xffffff;
+        var obj = mines[x][y];
+        if (obj.isFlag && !obj.isQ && !obj.isClicked) {
+            obj.text.setText(typeList.flag);
+            obj.text.tint = colorList.flag;
+            color = 0xf0f0f0;
+        } else if (obj.isQ && !obj.isFlag && !obj.isClicked) {
+            obj.text.setText(typeList.question);
+            obj.text.tint = colorList.question;
+            color = 0xf0f0f0;
+        } else {
+            obj.text.setText(typeList[obj.value]);
+            obj.text.tint = colorList[obj.value];
+        }
+        obj.graphic.clear();
+        obj.graphic.beginFill(color);
+        obj.graphic.drawRect(0, 0, size, size);
+        obj.graphic.endFill();
+        obj.isClicked = true;
+    }
+
+    function removeShow(x, y) {
+        mines[x][y].text.setText('');
+        mines[x][y].graphic.clear();
+        mines[x][y].graphic.beginFill(0xcccccc);
+        mines[x][y].graphic.drawRect(0, 0, size, size);
+        mines[x][y].graphic.endFill();
+        mines[x][y].isClicked = false;
+    }
+
+    function gameOver() {
+        for (var i = 0; i < bombList.length; i++) {
+            updateShow(bombList[i][0], bombList[i][1], '0xff0000');
+        }
+        setTimeout(function () {
+            alert('Game Over!');
+        }, 100);
+    }
+
+    window.oncontextmenu = function () {
+        return false;
+    };
+
+</script>
+
+</body>
+</html>

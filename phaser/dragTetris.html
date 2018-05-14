@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script src="res/js/phaser.min.js"></script>
+<script>
+    var game = new Phaser.Game(500, 600, Phaser.AUTO, '', {create: create}),
+        bgColor = {
+            sl: 0xff0000,   // 2*2 - L
+            ll: 0x00ff00,   // 3*3 - L
+            sq: 0xffff00,   // 1*1 - 方形
+            mq: 0xffff00,   // 2*2 - 方形
+            lq: 0xffff00,   // 3*3 - 方形
+            sh: 0xff00ff,   // 1*2 - 矩形
+            mh: 0xff00ff,   // 1*3 - 矩形
+            lh: 0x00ffff,   // 1*4 - 矩形
+            xh: 0x3030ff,   // 1*5 - 矩形
+            bg: 0x666666
+        },
+        blockList = [],
+        maps = {        // 方便随机生成形状
+            0: 'sl',
+            1: 'll',
+            2: 'sq',
+            3: 'mq',
+            4: 'lq',
+            5: 'sh',
+            6: 'mh',
+            7: 'lh',
+            8: 'xh'
+        },
+        size = 35,
+        count = 0,
+        countSuccess = 0,
+        dragList = [],
+        scoreLabel,
+        score,
+        btnRetry,
+        scoreCount = 0;
+
+    function create() {
+        var stage = game.add.sprite((game.width - size * 10) * .48, (game.height - size * 10) * .3);
+        scoreLabel = game.add.sprite(10, 10);
+        var scoreGraphic = game.add.graphics(0, 0);
+        scoreGraphic.lineStyle(2, 0xffffff, .5);
+        scoreGraphic.beginFill(0x999999);
+        scoreGraphic.drawRoundedRect(0, 0, 100, 40, 3);
+        scoreGraphic.endFill();
+        score = game.add.text(10, 2, 'Score: ' + scoreCount, {fill: 'white', boundsAlignV: 'middle', font: '16px normal'});
+        score.setTextBounds(0, 0, 100, 40);
+        scoreLabel.addChild(scoreGraphic);
+        scoreLabel.addChild(score);
+
+        btnRetry = game.add.button(game.width - 110, 10,'',resetGame);
+        var retryGraphic = game.add.graphics(0, 0),
+            retryText = game.add.text(0, 2, 'Retry', {
+                fill: 'white',
+                boundsAlignH: 'center',
+                boundsAlignV: 'middle',
+                font: '16px normal'
+            });
+        retryGraphic.lineStyle(2, 0xffffff, .5);
+        retryGraphic.beginFill(0x999999);
+        retryGraphic.drawRoundedRect(0, 0, 100, 40, 3);
+        retryGraphic.endFill();
+        retryText.setTextBounds(0, 0, 100, 40);
+        btnRetry.addChild(retryGraphic);
+        btnRetry.addChild(retryText);
+
+        for (var i = 0; i < 10; i++) {
+            blockList[i] = [];
+            for (var j = 0; j < 10; j++) {
+                var sprite = game.add.sprite(i * size + i, j * size + j),
+                    graphic = game.add.graphics(0, 0);
+                graphic.beginFill(bgColor.bg);
+                graphic.drawRect(0, 0, size, size);
+                graphic.endFill();
+                sprite.addChild(graphic);
+                stage.addChild(sprite);
+                blockList[i].push({sprite: sprite, graphic: graphic, isFill: false});
+            }
+        }
+        randShape();
+    }
+
+    function resetGame() {
+        count = 0;
+        countSuccess = 0;
+        scoreCount = 0;
+        for (var i = 0; i < 10; i++) {
+            for (var j = 0; j < 10; j++) {
+                var obj = blockList[i][j];
+                obj.graphic.clear();
+                obj.graphic.beginFill(bgColor.bg);
+                obj.graphic.drawRect(0, 0, size, size);
+                obj.graphic.endFill();
+                obj.isFill = false;
+            }
+        }
+        for (var j = 0; j < dragList.length; j++) {
+            console.log(j);
+            dragList[j].kill();
+        }
+        dragList = [];
+        score.setText('Score: ' + scoreCount);
+        randShape();
+    }
+
+    function randShape() {
+        checkList();
+        for (var i = 0; i < 3; i++) {
+            var startPos = [game.width * .15 + count * (size - 15) * 8, game.height * .75],
+                sprite = game.add.sprite(startPos[0], startPos[1]);
+            createShape(maps[Math.floor(Math.random() * 9)], Math.floor(Math.random() * 4), startPos, sprite);
+            sprite.inputEnabled = true;
+            sprite.input.draggable = true;
+            sprite.events.onDragStart.add(onDragDown, this);
+            sprite.events.onDragStop.add(onDragUp, this);
+            sprite.sub = i;
+            dragList.push(sprite);
+        }
+        isGameOver();
+    }
+
+    function createShape(type, rotate, startPos, sprite, sSize) {
+        rotate = rotate || 0;
+        sSize = sSize || size - 15;
+        var i = 0,
+            j = 0,
+            graphic,
+            sizes = [],
+            path = [];
+        switch (type) {
+            case 'sl':  // 2*2
+                for (i = 0; i < 2; i++) {
+                    for (j = 0; j < 2; j++) {
+                        if (rotate == 0) {
+                            if (i == 0 && j == 1) {
+                                path.push(0);
+                                continue;
+                            }
+                        } else if (rotate == 1) {
+                            if (i == 1 && j == 1) {
+                                path.push(0);
+                                continue;
+                            }
+                        } else if (rotate == 2) {
+                            if (i == 1 && j == 0) {
+                                path.push(0);
+                                continue;
+                            }
+                        } else if (rotate == 3) {
+                            if (i == 0 && j == 0) {
+                                path.push(0);
+                                continue;
+                            }
+                        }
+                        graphic = game.add.graphics(sSize * j + j, sSize * i + i);
+                        graphic.beginFill(bgColor[type]);
+                        graphic.drawRect(0, 0, sSize, sSize);
+                        graphic.endFill();
+                        sprite.addChild(graphic);
+                        path.push(1);
+                    }
+                }
+                sizes = [2, 2];
+                break;
+            case 'll':  // 3*3
+                for (i = 0; i < 3; i++) {
+                    for (j = 0; j < 3; j++) {
+                        if (rotate == 0) {
+                            if ((i == 0 || i == 1) && (j == 1 || j == 2)) {
+                                path.push(0);
+                                continue;
+                            }
+                        } else if (rotate == 1) {
+                            if ((i == 1 || i == 2) && (j == 1 || j == 2)) {
+                                path.push(0);
+                                continue;
+                            }
+                        } else if (rotate == 2) {
+                            if ((i == 1 || i == 2) && (j == 0 || j == 1)) {
+                                path.push(0);
+                                continue;
+                            }
+                        } else if (rotate == 3) {
+                            if ((i == 0 || i == 1) && (j == 0 || j == 1)) {
+                                path.push(0);
+                                continue;
+                            }
+                        }
+                        graphic = game.add.graphics(sSize * j + j, sSize * i + i);
+                        graphic.beginFill(bgColor[type]);
+                        graphic.drawRect(0, 0, sSize, sSize);
+                        graphic.endFill();
+                        sprite.addChild(graphic);
+                        path.push(1);
+                    }
+                }
+                sizes = [3, 3];
+                break;
+            case 'sq':  // 1*1
+                for (i = 0; i < 1; i++) {
+                    graphic = game.add.graphics(sSize * j + j, sSize * i + i);
+                    graphic.beginFill(bgColor[type]);
+                    graphic.drawRect(0, 0, sSize, sSize);
+                    graphic.endFill();
+                    sprite.addChild(graphic);
+                    path.push(1);
+                }
+                sizes = [1, 1];
+                break;
+            case 'mq':  // 2*2
+                for (i = 0; i < 2; i++) {
+                    for (j = 0; j < 2; j++) {
+                        graphic = game.add.graphics(sSize * j + j, sSize * i + i);
+                        graphic.beginFill(bgColor[type]);
+                        graphic.drawRect(0, 0, sSize, sSize);
+                        graphic.endFill();
+                        sprite.addChild(graphic);
+                        path.push(1);
+                    }
+                }
+                sizes = [2, 2];
+                break;
+            case 'lq':  // 3*3
+                for (i = 0; i < 3; i++) {
+                    for (j = 0; j < 3; j++) {
+                        graphic = game.add.graphics(sSize * j + j, sSize * i + i);
+                        graphic.beginFill(bgColor[type]);
+                        graphic.drawRect(0, 0, sSize, sSize);
+                        graphic.endFill();
+                        sprite.addChild(graphic);
+                        path.push(1);
+                    }
+                }
+                sizes = [3, 3];
+                break;
+            case 'sh':  // 1*2
+                sizes = [1, 2];
+                for (i = 0; i < 1; i++) {
+                    for (j = 0; j < 2; j++) {
+                        graphic = game.add.graphics(sSize * j + j, sSize * i + i);
+                        if (rotate % 2 == 1) {
+                            graphic = game.add.graphics(sSize * i + i, sSize * j + j);
+                            sizes = [2, 1];
+                        }
+                        graphic.beginFill(bgColor[type]);
+                        graphic.drawRect(0, 0, sSize, sSize);
+                        graphic.endFill();
+                        sprite.addChild(graphic);
+                        path.push(1);
+                    }
+                }
+                break;
+            case 'mh':  // 1*3
+                sizes = [1, 3];
+                for (i = 0; i < 1; i++) {
+                    for (j = 0; j < 3; j++) {
+                        graphic = game.add.graphics(sSize * j + j, sSize * i + i);
+                        if (rotate % 2 == 1) {
+                            graphic = game.add.graphics(sSize * i + i, sSize * j + j);
+                            sizes = [3, 1];
+                        }
+                        graphic.beginFill(bgColor[type]);
+                        graphic.drawRect(0, 0, sSize, sSize);
+                        graphic.endFill();
+                        sprite.addChild(graphic);
+                        path.push(1);
+                    }
+                }
+                break;
+            case 'lh':  // 1*4
+                sizes = [1, 4];
+                for (i = 0; i < 1; i++) {
+                    for (j = 0; j < 4; j++) {
+                        graphic = game.add.graphics(sSize * j + j, sSize * i + i);
+                        if (rotate % 2 == 1) {
+                            graphic = game.add.graphics(sSize * i + i, sSize * j + j);
+                            sizes = [4, 1];
+                        }
+                        graphic.beginFill(bgColor[type]);
+                        graphic.drawRect(0, 0, sSize, sSize);
+                        graphic.endFill();
+                        sprite.addChild(graphic);
+                        path.push(1);
+                    }
+                }
+                break;
+            case 'xh':  // 1*5
+                sizes = [1, 5];
+                for (i = 0; i < 1; i++) {
+                    for (j = 0; j < 5; j++) {
+                        graphic = game.add.graphics(sSize * j + j, sSize * i + i);
+                        if (rotate % 2 == 1) {
+                            graphic = game.add.graphics(sSize * i + i, sSize * j + j);
+                            sizes = [5, 1];
+                        }
+                        graphic.beginFill(bgColor[type]);
+                        graphic.drawRect(0, 0, sSize, sSize);
+                        graphic.endFill();
+                        sprite.addChild(graphic);
+                        path.push(1);
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+
+        sprite.otherInfo = {pos: startPos, type: type, rotate: rotate, size: sizes.reverse(), path: path};
+        count++;
+    }
+
+    function onDragDown(e) {
+        var info = e.otherInfo;
+        while (e.children.length != 0) {
+            e.removeChildAt(0);
+        }
+        createShape(info.type, info.rotate, info.pos, e, size);
+        count--;
+    }
+
+    function onDragUp(e) {
+        var border = [(game.width - size * 10) * .48, (game.height - size * 10) * .3],
+            pos = [Math.round((e.x - border[0]) / size), Math.round((e.y - border[1]) / size)],
+            info = e.otherInfo;
+        if (updateShape(info, pos)) {
+            e.kill();
+            dragList = removeEle(e.sub, dragList).slice();
+            checkList();
+            isGameOver();
+            if (countSuccess % 3 == 0 && scoreCount != 0) {
+                count = 0;
+                randShape();
+            }
+        } else {
+            while (e.children.length != 0) {
+                e.removeChildAt(0);
+            }
+            createShape(info.type, info.rotate, info.pos, e, size - 15);
+            count--;
+            e.reset(info.pos[0], info.pos[1]);
+        }
+    }
+
+    function removeEle(sub, arr) {
+        var result = [];
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i].sub != sub) {
+                result.push(arr[i]);
+            }
+        }
+        return result;
+    }
+
+    function updateShape(info, pos) {
+        if ((pos[0] < 0 || pos[1] < 0 || pos[0] >= 10 || pos[1] >= 10) || (pos[0] + info.size[0] > 10 || (pos[1]) + info.size[1] > 10)) {
+            return false;
+        }
+        var counts,
+            result = [];
+        for (var i = pos[0]; i < pos[0] + info.size[0]; i++) {
+            counts = i - pos[0];
+            for (var j = pos[1]; j < pos[1] + info.size[1]; j++) {
+                var obj = blockList[i][j];
+                if (info.path[counts]) {
+                    if (obj.isFill) {
+                        return false;
+                    }
+                    result.push([i, j]);
+                }
+                if (info.size[0] != 1) {
+                    counts += info.size[1];
+                } else {
+                    counts += info.size[0];
+                }
+            }
+        }
+
+        for (var k = 0; k < result.length; k++) {
+            var tmp = result[k],
+                obj = blockList[tmp[0]][tmp[1]];
+            obj.graphic.clear();
+            obj.graphic.beginFill(bgColor[info.type]);
+            obj.graphic.drawRect(0, 0, size, size);
+            obj.graphic.endFill();
+            obj.isFill = true;
+            scoreCount++;
+            score.setText('Score: ' + scoreCount);
+        }
+
+        countSuccess++;
+        return true;
+    }
+
+    function checkList() {
+        var flag = true,
+            i, j, k,
+            resultH = [],
+            resultV = [];
+        // 纵向检测
+        for (i = 0; i < 10; i++) {
+            flag = true;
+            for (j = 0; j < 10; j++) {
+                flag = flag && blockList[i][j].isFill;
+            }
+            if (flag) {
+                resultH.push(i);
+            }
+        }
+
+        // 横向检测
+        for (i = 0; i < 10; i++) {
+            flag = true;
+            for (j = 0; j < 10; j++) {
+                flag = flag && blockList[j][i].isFill;
+            }
+            if (flag) {
+                resultV.push(i);
+            }
+        }
+
+        for (i = 0; i < resultH.length; i++) {
+            for (k = 0; k < 10; k++) {
+                var obj = blockList[resultH[i]][k];
+                obj.graphic.clear();
+                obj.graphic.beginFill(bgColor.bg);
+                obj.graphic.drawRect(0, 0, size, size);
+                obj.graphic.endFill();
+                obj.isFill = false;
+            }
+        }
+        for (i = 0; i < resultV.length; i++) {
+            for (k = 0; k < 10; k++) {
+                var obj = blockList[k][resultV[i]];
+                obj.graphic.clear();
+                obj.graphic.beginFill(bgColor.bg);
+                obj.graphic.drawRect(0, 0, size, size);
+                obj.graphic.endFill();
+                obj.isFill = false;
+            }
+        }
+    }
+
+    function isGameOver() {
+        var tmp = [],
+            isOver = !dragList.length;
+        for (var m = 0; m < 10; m++) {
+            for (var n = 0; n < 10; n++) {
+                if (!blockList[m][n].isFill) {
+                    tmp.push([m, n]);
+                }
+            }
+        }
+
+        for (var i = 0; i < dragList.length; i++) {
+            var path = dragList[i].otherInfo.path,
+                tmpSize = dragList[i].otherInfo.size;
+            isOver = isOver || handle(path, tmpSize, tmp);
+        }
+
+        if (!isOver) {
+            var c = confirm('Game Over! Try again?');
+            if (c) {
+                console.log('---------');
+                resetGame();
+            }
+        }
+    }
+
+    function handle(path, size, empty) {
+        var counts = 0;
+        for (var i = 0; i < empty.length; i++) {
+            var curPos = empty[i],
+                flag = true;
+            for (var m = 0; m < size[0]; m++) {
+                counts = m;
+                for (var n = 0; n < size[1]; n++) {
+                    if (path[counts]) {
+                        flag = flag && isExisted([curPos[0] + m, curPos[1] + n], empty);
+                    }
+                    if (size[0] != 1) {
+                        counts += size[1];
+                    } else {
+                        counts += size[0];
+                    }
+                }
+            }
+            if (flag) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    function isExisted(ele, arr) {
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i].toString() == ele.toString()) {
+                return true;
+            }
+        }
+        return false;
+    }
+</script>
+</body>
+</html>

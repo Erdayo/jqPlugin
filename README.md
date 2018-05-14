@@ -48,7 +48,9 @@
 - phaser  
 	[sudoku --- 数独](https://erdayo.github.io/otherDemo/phaser/sudoku.html)  
 	[huarongRoad --- 数字华容道](https://erdayo.github.io/otherDemo/phaser/huarongRoad.html)  
-	[nofp --- 数图迷阵](https://erdayo.github.io/otherDemo/phaser/nofp.html)
+	[nofp --- 数图迷阵](https://erdayo.github.io/otherDemo/phaser/nofp.html)  
+	[mineClear --- 扫雷](http://erdayo.github.io/otherDemo/phaser/mineClear.html)  
+	[dragTetris --- 拖拽俄罗斯方块](http://erdayo.github.io/otherDemo/phaser/dragTetris.html)
 
 - customPlayer  
 	[player --- 音乐播放器](https://erdayo.github.io/otherDemo/customPlayer/player.html)(播放器静态网页无法预览)
