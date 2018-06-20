@@ -1,4 +1,4 @@
-.htb-wrap{ max-width: 438px; border: 1px solid #d9d9d9; font-size: 14px;}
+.htb-wrap{ position: relative; max-width: 438px; border: 1px solid #d9d9d9; font-size: 14px; z-index: 999;}
 .htb-wrap *{ margin: 0; padding: 0;}
 .htb-wrap .htb-tabs{ height: 40px; border-bottom: 1px solid #d9d9d9; line-height: 40px;}
 .htb-wrap .htb-tabs > div{ float: left; text-align: center; color: #4c4c4c;}
@@ -12,7 +12,7 @@
 .htb-wrap .htb-tab:nth-child(2){ width: 185px;}
 .htb-wrap .htb-tab:nth-child(3){ width: 199px;}
 .htb-wrap .htb-tab.htb-hover a{ bottom: -1px;}
-.htb-wrap .htb-chart{ position: absolute; left: -1px; top: 40px; width: 408px; height: 216px; background: white; border: 1px solid #d9d9d9; border-bottom: 2px solid red; display: none;}
+.htb-wrap .htb-chart{ position: relative; left: -1px; top: 40px; width: 408px; height: 216px; background: white; border: 1px solid #d9d9d9; border-bottom: 2px solid red; display: none;}
 .htb-wrap .htb-tab.htb-hover .htb-chart{ display: block;}
 
 .htb-wrap .htb-asd{ overflow: hidden;}
