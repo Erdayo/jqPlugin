@@ -8,11 +8,11 @@
 .htb-wrap .htb-tab{ position: relative; height: 40px; border-left: 1px solid #d9d9d9;}
 .htb-wrap .htb-tab img{ margin-right: 15px;}
 .htb-wrap .htb-tab span{ font-weight: bold; color: red;}
-.htb-wrap .htb-tab a{ position: absolute; left: 0; top: 0; right: 0; bottom: 0; z-index: 100; background: white;}
+.htb-wrap .htb-tab a{ position: absolute; left: 0; top: 0; right: 0; bottom: 0; z-index: 2; background: white;}
 .htb-wrap .htb-tab:nth-child(2){ width: 185px;}
 .htb-wrap .htb-tab:nth-child(3){ width: 199px;}
 .htb-wrap .htb-tab.htb-hover a{ bottom: -1px;}
-.htb-wrap .htb-chart{ position: relative; left: -1px; top: 40px; width: 408px; height: 216px; background: white; border: 1px solid #d9d9d9; border-bottom: 2px solid red; display: none; z-index: 99;}
+.htb-wrap .htb-chart{ position: relative; left: -1px; top: 40px; width: 408px; height: 216px; background: white; border: 1px solid #d9d9d9; border-bottom: 2px solid red; display: none;}
 .htb-wrap .htb-tab.htb-hover .htb-chart{ display: block;}
 .htb-wrap .htb-chart #htb-con{ width: 100%; height: 100%;}
 
