@@ -1,5 +1,6 @@
 .htb-wrap{ max-width: 438px; border: 1px solid #d9d9d9; font-size: 14px;}
 .htb-wrap *{ margin: 0; padding: 0;}
+.htb-wrap a:hover{ text-decoration: none;}
 .htb-wrap .htb-tabs{ height: 40px; border-bottom: 1px solid #d9d9d9; line-height: 40px;}
 .htb-wrap .htb-tabs > div{ float: left; text-align: center;}
 .htb-wrap .htb-tabs a{ display: block; cursor: pointer; color: #4c4c4c;}
