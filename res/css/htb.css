@@ -14,6 +14,7 @@
 .htb-wrap .htb-tab.htb-hover a{ bottom: -1px;}
 .htb-wrap .htb-chart{ position: relative; left: -1px; top: 40px; width: 408px; height: 216px; background: white; border: 1px solid #d9d9d9; border-bottom: 2px solid red; display: none;}
 .htb-wrap .htb-tab.htb-hover .htb-chart{ display: block;}
+.htb-wrap .htb-chart #htb-con{ width: 100%; height: 100%;}
 
 .htb-wrap .htb-asd{ overflow: hidden;}
 .htb-wrap .htb-asd > div{ margin: 20px 0 20px 20px; /*max-height: 90px;*/ overflow-y: auto;}
