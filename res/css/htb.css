@@ -5,7 +5,7 @@
 .htb-wrap .htb-tabs > div{ float: left; text-align: center;}
 .htb-wrap .htb-tabs a{ display: block; cursor: pointer; color: #4c4c4c;}
 .htb-wrap .htb-tabs a img{ display: inline-block; vertical-align: middle;}
-.htb-wrap .htb-logo{ width: 52px; text-align: center;}
+.htb-wrap .htb-logo{ width: 52px; text-align: center; line-height: 38px;}
 .htb-wrap .htb-tab{ position: relative; height: 40px; border-left: 1px solid #d9d9d9;}
 .htb-wrap .htb-tab img{ margin-right: 15px;}
 .htb-wrap .htb-tab span{ font-weight: bold; color: red;}
@@ -13,11 +13,11 @@
 .htb-wrap .htb-tab:nth-child(3){ width: 199px;}
 .htb-wrap .htb-tab.htb-hover a:after{ content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: white; z-index: 10;}
 .htb-wrap .htb-tab > div{ line-height: normal; text-align: left; display: none;}
-.htb-wrap .htb-chart{ position: relative; left: -1px; top: 0; width: 408px; height: 216px; background: white; border: 1px solid #d9d9d9; border-bottom: 2px solid red; z-index: 9;}
+.htb-wrap .htb-chart{ position: relative; left: -1px; top: 0; width: 408px; height: 216px; background: white; border: 1px solid #d9d9d9; border-bottom: 2px solid red; z-index: 9;line-height: 0; font-family: "Arial";}
 .htb-wrap .htb-tab.htb-hover>div{ display: block;}
 .htb-wrap .htb-chart #htb-con{ width: 100%; height: 100%;}
 .htb-wrap .htb-asd{ overflow: hidden;}
-.htb-wrap .htb-asd > div{ margin: 20px 0 20px 20px; /*max-height: 90px;*/ overflow-y: auto;}
+.htb-wrap .htb-asd > div{ margin: 10px 0 10px 20px; /*max-height: 90px;*/ overflow-y: auto;}
 .htb-wrap .htb-asd ul{ overflow: hidden;}
 .htb-wrap .htb-asd li{ /*height: 30px;*/ margin-right: 25px; list-style: none; line-height: 30px; font-size: 0;}
 .htb-wrap .htb-asd li:nth-child(2n){ margin-right: 0;}
