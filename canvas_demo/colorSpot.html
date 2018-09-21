@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        display: grid;
+        height: 100vh;
+        background: #f0f0f0;
+        align-items: center;
+        justify-content: center;
+    }
+
+    canvas {
+        border-radius: 5px;
+        box-shadow: 0 0 10px #999;
+        cursor: default;
+    }
+</style>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<script>
+    //圆角矩形
+    CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+        let min_size = Math.min(w, h);
+        if (r > min_size / 2) r = min_size / 2;
+        // 开始绘制
+        this.beginPath();
+        this.moveTo(x + r, y);
+        this.arcTo(x + w, y, x + w, y + h, r);
+        this.arcTo(x + w, y + h, x, y + h, r);
+        this.arcTo(x, y + h, x, y, r);
+        this.arcTo(x, y, x + w, y, r);
+        this.closePath();
+        return this;
+    };
+
+    let canvas = document.getElementById('canvas'),
+        ctx = canvas.getContext('2d'),
+        width = 360,
+        height = 600;
+
+    canvas.width = width;
+    canvas.height = height;
+
+    function ColorSpot() {
+        this.baseLen = 2;
+        this.space = 5;
+        this.score = 0;
+        this.offsetTop = 150;
+        this.init();
+    }
+    ColorSpot.prototype = {
+        init: function () {
+            this.pos = [this.rounds(0, this.baseLen - 1), this.rounds(0, this.baseLen - 1)];
+            this.drawRect(this.pos);
+            this.handlerClick();
+            this.handlerScore();
+            this.handlerOptions();
+        },
+
+        handlerScore: function () {
+            let ot = 50;
+            ctx.clearRect(20, ot, 200, 50);
+            ctx.beginPath();
+            ctx.fillStyle = 'black';
+            ctx.font = '24px Console';
+            ctx.textAlign = 'left';
+            ctx.fillText(`level: ${this.score}`, 20, ot + 32);
+            ctx.closePath();
+        },
+
+        drawRect: function (randSub) {
+            let h = this.rounds(0, 360),
+                s = this.rounds(0, 100),
+                l = this.rounds(10, 100);
+            this.baseSize = (width - this.space * 8 - this.baseLen * this.space) / this.baseLen;
+            ctx.clearRect(20, this.offsetTop, (this.baseSize + this.space) * this.baseLen - this.space, (this.baseSize + this.space) * this.baseLen - this.space);
+            for (let i = 0; i < this.baseLen; i++) {
+                for (let j = 0; j < this.baseLen; j++) {
+                    ctx.beginPath();
+                    if (randSub[0] == i && randSub[1] == j) {
+                        ctx.fillStyle = `hsl(${h}, ${s}%, ${l - 5}%)`;
+                        this.specialFill = {
+                            h,
+                            s,
+                            l: l - 5
+                        };
+                    } else {
+                        ctx.fillStyle = `hsl(${h}, ${s}%, ${l}%)`;
+                    }
+                    ctx.rect(this.space * 4 + this.baseSize * i + (i * this.space), this.offsetTop + this.baseSize * j + (j * this.space), this.baseSize, this.baseSize);
+                    ctx.fill();
+                    ctx.closePath();
+                }
+            }
+        },
+
+        handlerClick: function () {
+            let self = this;
+            canvas.addEventListener('click', function (e) {
+                let pos = {
+                        x: e.layerX,
+                        y: e.layerY
+                    },
+                    boundRect = {
+                        sx: self.space * 4 + self.baseSize * self.pos[0] + self.pos[0] * self.space,
+                        sy: self.offsetTop + self.baseSize * self.pos[1] + self.pos[1] * self.space
+                    };
+                // main
+                if (pos.x >= boundRect.sx && pos.x <= boundRect.sx + self.baseSize
+                    && pos.y >= boundRect.sy && pos.y <= boundRect.sy + self.baseSize) {
+                    self.score++;
+                    self.baseLen++;
+                    self.pos = [self.rounds(0, self.baseLen - 1), self.rounds(0, self.baseLen - 1)];
+                    self.handlerScore();
+                    self.drawRect(self.pos);
+                }
+
+                // button
+                if (pos.x >= width / 2 - 60 && pos.x <= width / 2 + 60
+                    && pos.y >= height * .9 - 20 && pos.y <= height * .9 + 20) {
+                    ctx.beginPath();
+                    ctx.fillStyle = `hsl(${360 - self.specialFill.h}, ${100 - self.specialFill.s}%, ${100 - self.specialFill.l}%)`;
+                    ctx.rect(boundRect.sx, boundRect.sy, self.baseSize, self.baseSize);
+                    ctx.fill();
+                    ctx.closePath();
+                }
+            });
+
+            canvas.addEventListener('mousemove', function (e) {
+                let pos = {
+                    x: e.layerX,
+                    y: e.layerY
+                };
+                // button
+                if (pos.x >= width / 2 - 60 && pos.x <= width / 2 + 60
+                    && pos.y >= height * .9 - 20 && pos.y <= height * .9 + 20) {
+                    canvas.style.cursor = 'pointer';
+                } else {
+                    canvas.style.cursor = 'default';
+                }
+            })
+        },
+
+        handlerOptions: function () {
+            ctx.beginPath();
+            ctx.strokeStyle = 'black';
+            ctx.roundRect(width / 2 - 60, height * .9 - 20, 120, 40, 5);
+            ctx.stroke();
+            ctx.font = '16px Console';
+            ctx.textAlign = 'center';
+            ctx.fillText('查看答案', width / 2, height * .9 + 5);
+            ctx.closePath();
+        },
+
+        rounds: function (min, max) {
+            return Math.round(Math.random() * (max - min)) + min;
+        }
+    };
+
+    let cs = new ColorSpot();
+</script>
+</body>
+</html>
