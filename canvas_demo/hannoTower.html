@@ -78,8 +78,10 @@
                 ctx.stroke();
                 ctx.closePath();
             }
-            ctx.font = '16px Console';
+
             ctx.fillStyle = '#333';
+            ctx.font = '16px Console';
+            ctx.textAlign = 'left';
             ctx.fillText(`当前步数：${this.steps}`, 20, 100);
             ctx.font = '22px Console';
             ctx.textAlign = 'center';
