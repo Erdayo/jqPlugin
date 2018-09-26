@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>汉诺塔</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        height: 100vh;
+        display: grid;
+        align-items: center;
+        justify-content: center;
+        background: #f0f0f0;
+    }
+
+    canvas {
+        box-shadow: 0 0 10px #ccc;
+        border-radius: 5px;
+    }
+</style>
+<body>
+<canvas id="canvas"></canvas>
+
+<script>
+    let canvas = document.getElementById('canvas'),
+        ctx = canvas.getContext('2d'),
+        width = 800,
+        height = 500;
+
+    canvas.width = width;
+    canvas.height = height;
+
+    function Hanno() {
+        this.pos = {
+            0: [],
+            1: [6, 5, 4, 3, 2, 1, 0],
+            2: []
+        };
+        this.space = 250;
+        this.startX = 60;
+        this.preObj = -1;
+        this.steps = 0;
+        this.init();
+    }
+
+    Hanno.prototype = {
+        init: function () {
+            this.update();
+            this.handlerMover();
+        },
+
+        update: function () {
+            ctx.clearRect(0, 0, width, height);
+            ctx.shadowColor = '#333';
+            ctx.shadowBlur = 1;
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < this.pos[i].length; j++) {
+                    ctx.beginPath();
+                    ctx.fillStyle = `hsl(${this.pos[i][j] * 60}, 60%, ${this.pos[i][j] * 10 + 10}%)`;
+                    ctx.rect(i * this.space + this.startX + 70 - (this.pos[i][j] + 1) * 10,
+                        height * .8 - (j + 1) * 15,
+                        (this.pos[i][j] + 1) * 20,
+                        15);
+                    ctx.fill();
+                    ctx.closePath();
+                }
+                ctx.beginPath();
+                ctx.strokeStyle = 'black';
+                ctx.moveTo(i * this.space + this.startX - 10, height * .8);
+                ctx.lineTo(i * this.space + this.startX + 150, height * .8);
+                ctx.moveTo(i * this.space + this.startX + 70, height * .8);
+                ctx.lineTo(i * this.space + this.startX + 70, height * .55);
+                ctx.stroke();
+                ctx.closePath();
+            }
+            ctx.font = '16px Console';
+            ctx.fillStyle = '#333';
+            ctx.fillText(`当前步数：${this.steps}`, 20, 100);
+            ctx.font = '22px Console';
+            ctx.textAlign = 'center';
+            ctx.fillText('汉诺塔(鼠标拖拽操作)', width/2, 50);
+        },
+
+        dragRect: function (x, y, num) {
+            ctx.clearRect(0, 0, width, height);
+            this.update();
+            ctx.beginPath();
+            ctx.fillStyle = `hsl(${num * 60}, 60%, ${num * 10 + 10}%)`;
+            ctx.rect(x, y, (num + 1) * 20, 15);
+            ctx.fill();
+            ctx.closePath();
+        },
+
+        handlerMover: function () {
+            let self = this,
+                baseW = 160,
+                baseH = height * .8 - height * .55,
+                basePos = {
+                    0: {x: this.startX - 10, y: height * .55},
+                    1: {x: this.space + this.startX - 10, y: height * .55},
+                    2: {x: 2 * this.space + this.startX - 10, y: height * .55}
+                },
+                isDrag = false,
+                isPop = false,
+                popVal = -1;
+            canvas.addEventListener('mousemove', (e) => {
+                if (!isDrag) return;
+                if (!isPop) {
+                    popVal = self.pos[self.preObj].pop();
+                    isPop = true;
+                }
+                self.dragRect(e.layerX, e.layerY, popVal);
+            });
+
+            canvas.addEventListener('mousedown', (e) => {
+                isDrag = true;
+                for (let i = 0; i < 3; i++) {
+                    if (e.layerX >= basePos[i].x && e.layerX <= basePos[i].x + baseW
+                        && e.layerY >= basePos[i].y && e.layerY <= basePos[i].y + baseH) {
+                        self.preObj = i;
+                    }
+                }
+            });
+
+            canvas.addEventListener('mouseup', (e) => {
+                isDrag = false;
+                isPop = false;
+                for (let i = 0; i < 3; i++) {
+                    let len = self.pos[i].length;
+                    if (e.layerX >= basePos[i].x && e.layerX <= basePos[i].x + baseW
+                        && e.layerY >= basePos[i].y && e.layerY <= basePos[i].y + baseH) {
+                        if ((self.pos[i][len - 1] > popVal || self.pos[i][len - 1] == undefined) && self.preObj != i) {
+                            self.pos[i].push(popVal);
+                            self.pos[i].sort().reverse();
+                            self.steps++;
+                        }
+                    }
+                }
+                if (self.pos['0'].length + self.pos['1'].length + self.pos['2'].length < 7) {
+                    self.pos[self.preObj].push(popVal);
+                }
+                self.update();
+                if (self.pos['0'].length == 7 || self.pos['2'].length == 7) {
+                    alert('success~');
+                }
+            });
+        }
+    };
+
+    let hn = new Hanno();
+
+</script>
+</body>
+</html>

@@ -18,7 +18,8 @@
 	[drawBezier.html --- 贝塞尔曲线作图](https://erdayo.github.io/otherDemo/canvas_demo/drawBezier.html)   
 	[matrix.html --- 矩阵变换(包括求逆矩阵)](https://erdayo.github.io/otherDemo/canvas_demo/matrix.html)   
 	[watermark.html --- 图片添加水印](https://erdayo.github.io/otherDemo/canvas_demo/watermark.html)  
-	[colorSpot.html --- 辨色](https://erdayo.github.io/otherDemo/canvas_demo/colorSpot.html) 
+	[colorSpot.html --- 辨色](https://erdayo.github.io/otherDemo/canvas_demo/colorSpot.html)   
+	[hannoTower.html --- 汉诺塔](https://erdayo.github.io/otherDemo/canvas_demo/hannoTower.html)
 	
 - css3_demo	  
 	[rasterized --- 栅格化](https://erdayo.github.io/otherDemo/css3_demo/rasterized/index.html)  
