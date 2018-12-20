@@ -56,6 +56,9 @@
 
 - customPlayer  
 	[player --- 音乐播放器](https://erdayo.github.io/otherDemo/customPlayer/player.html)(播放器静态网页无法预览)
+
+- test  
+	[closeTab --- 关闭当前窗口](https://erdayo.github.io/otherDemo/test/closeTab.html)
  
 ## tip: 
 bdSearchDemo.html 中 调用的百度 "http://unionsug.baidu.com/su?wd=" 不支持https 访问
