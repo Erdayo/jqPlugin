@@ -65,13 +65,15 @@
 <div id="setProp" class="sidebar">
     <p><label>文件: </label> <input id="upload" type="file" accept="image/*"></p>
     <p><label>水印文字: </label><input type="text" placeholder="" value="测试水印" name="txt"></p>
-    <p><label>水印文字大小: </label><input type="number" value="50" placeholder="" name="size"></p>
+    <p><label>水印文字大小: </label><input type="number" value="200" placeholder="" name="size"></p>
     <p><label>水印旋转角度: </label><input type="number" value="30" placeholder="" name="rotate"></p>
     <!--<p><label>水印模糊半径: </label><input type="number" value="30" placeholder="" name="radius"></p>-->
     <p><label>水印水平位置: </label><input type="number" value="200" placeholder="" name="x"></p>
     <p><label>水印垂直位置: </label><input type="number" value="200" placeholder="" name="y"></p>
-    <p><label>是否重复: </label><input type="checkbox"></p>
-    <p><label>水印间距: </label><input type="number" value="500" placeholder="" name="space"></p>
+    <p><label>是否水平重复: </label><input type="checkbox" name="repeatX"></p>
+    <p><label>是否垂直重复: </label><input type="checkbox" name="repeatY"></p>
+    <p><label>水印水平间距: </label><input type="number" value="500" placeholder="" name="spaceX"></p>
+    <p><label>水印垂直间距: </label><input type="number" value="500" placeholder="" name="spaceY"></p>
     <p><label>保存图片格式: </label><input type="text" value="" placeholder="格式为: png / jpeg(默认)" name="format"></p>
     <button>保存</button>
 </div>
@@ -91,8 +93,10 @@
             radius: 30,                 // 模糊半径 -_-!! 目前无效果
             x: 200,                     // 水印水平位置
             y: 200,                     // 水印垂直位置
-            isRepeat: false,            // 是否重复
-            space: 500,                 // 水印间隔距离
+            repeatY: false,            // 是否重复
+            repeatX: false,            // 是否重复
+            spaceY: 500,                 // 水印间隔距离
+            spaceX: 500,                 // 水印间隔距离
             format: 'jpeg',             // 输出格式
             fileName: '3'               // 文件名(根据原图名称自动获取)
         };
@@ -152,7 +156,7 @@
                     self.drawImg();
                     break;
                 case 'checkbox':
-                    self.baseProp.isRepeat = curIn.checked;
+                    self.baseProp[curIn.name] = curIn.checked;
                     self.drawImg();
                     break;
                 default:
@@ -182,8 +186,13 @@
          */
         drawText: function () {
             var curRotate = this.baseProp.rotate * Math.PI / 180,
-                maxRepeat = 5;
-            ~~(this.baseProp.imgW / this.baseProp.space) <= maxRepeat ? maxRepeat = ~~(this.baseProp.imgW / this.baseProp.space) : maxRepeat;
+                maxRepeatY = 5,
+                maxRepeatX = 5,
+                i;
+            ~~(this.baseProp.imgH / this.baseProp.spaceY) <= maxRepeatY ? maxRepeatY = ~~(this.baseProp.imgH / this.baseProp.spaceY) : maxRepeatY;
+            ~~(this.baseProp.imgW / this.baseProp.spaceX) <= maxRepeatX ? maxRepeatX = ~~(this.baseProp.imgW / this.baseProp.spaceX) : maxRepeatX;
+
+
             this.ctx.beginPath();
             this.ctx.save();
             this.ctx.setTransform(Math.cos(curRotate), -Math.sin(curRotate), Math.sin(curRotate), Math.cos(curRotate), this.baseProp.x, this.baseProp.y);
@@ -192,12 +201,28 @@
             this.ctx.font = 'bold ' + this.baseProp.size + 'px Microsoft YaHei';
             this.ctx.shadowBlur = this.baseProp.radius;
             this.ctx.shadowColor = 'rgba(0,0,0,.8)';
-            this.ctx.strokeText(this.baseProp.txt, 0, 0);
-            if (this.baseProp.isRepeat) {
-                for (var i = 1; i <= maxRepeat; i++) {
-                    this.ctx.strokeText(this.baseProp.txt, ~~(-this.baseProp.space * Math.sin(curRotate)) * i, ~~(this.baseProp.space * Math.cos(curRotate)) * i);
+
+            if (this.baseProp.repeatY && !this.baseProp.repeatX) {
+                for (i = 0; i <= maxRepeatY; i++) {
+                    this.ctx.strokeText(this.baseProp.txt, ~~(-this.baseProp.spaceY * Math.sin(curRotate)) * i, ~~(this.baseProp.spaceY * Math.cos(curRotate)) * i);
                 }
             }
+            else if (this.baseProp.repeatX && !this.baseProp.repeatY) {
+                for (i = 0; i <= maxRepeatX; i++) {
+                    this.ctx.strokeText(this.baseProp.txt, ~~(this.baseProp.spaceX * Math.cos(curRotate)) * i, ~~(this.baseProp.spaceX * Math.sin(curRotate)) * i);
+                }
+            } else if (this.baseProp.repeatX && this.baseProp.repeatY) {
+                for (i = 0; i <= maxRepeatX; i++) {
+                    var curX = ~~(this.baseProp.spaceX * Math.cos(curRotate)) * i;
+                    var curY = ~~(this.baseProp.spaceX * Math.sin(curRotate)) * i;
+                    for (var j = 0; j <= maxRepeatY; j++) {
+                        this.ctx.strokeText(this.baseProp.txt, curX + ~~(-this.baseProp.spaceY * Math.sin(curRotate)) * j, curY + ~~(this.baseProp.spaceY * Math.cos(curRotate)) * j);
+                    }
+                }
+            }else {
+                this.ctx.strokeText(this.baseProp.txt, 0, 0);
+            }
+
             this.ctx.closePath();
         },
 
