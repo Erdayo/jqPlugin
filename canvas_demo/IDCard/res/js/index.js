@@ -11,8 +11,8 @@ function IDCard() {
         frontH: 150,
         backW: 1240,
         backH: 150,
-        frontSrc: '',
-        backSrc: '',
+        frontSrc: './res/images/微信图片_20190606104401.jpg',
+        backSrc: './res/images/微信图片_20190606104406.jpg',
         format: 'jpeg'
     };
     this.clipData = {
@@ -121,6 +121,9 @@ IDCard.prototype = {
         $('#save').click(function () {
             self.saveImg();
         });
+
+        this.drawImg('front');
+        this.drawImg('back');
     },
 
     initSetting: function () {
