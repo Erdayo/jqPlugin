@@ -1,0 +1,142 @@
+body {
+    min-width: 1200px;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #eee;
+    border-radius: 2em;
+}
+
+.left {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 300px;
+    padding: 20px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, .5);
+    background: white;
+    z-index: 999;
+}
+
+.left h2 {
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 20px;
+    color: #333;
+}
+
+.left p {
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #999;
+}
+
+.left ul {
+    max-height: 258px;
+    overflow-y: auto;
+}
+
+.left li {
+    margin-bottom: 10px;
+    line-height: 28px;
+    font-size: 14px;
+    overflow: hidden;
+}
+
+.left li:last-child {
+    margin-bottom: 0;
+}
+
+.left li.split {
+    margin: 20px 0;
+    border-top: 1px dashed #ccc;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+.left li * {
+    float: left;
+}
+
+.left li label {
+    width: 100px;
+    text-align: right;
+}
+
+.left li input {
+    width: 58px;
+    height: 26px;
+    line-height: 26px;
+    padding: 0 5px;
+    border: 1px solid #ccc;
+}
+
+.left li input[type=file] {
+    width: 175px;
+    padding: 0;
+    border: none;
+}
+
+.left li span {
+    margin: 0 5px;
+}
+
+.right {
+    position: relative;
+    width: 1240px;
+    /*min-height: 1754px;*/
+    margin: 10px auto;
+    box-shadow: 0 0 5px rgba(0, 0, 0, .5);
+    overflow: hidden;
+}
+
+.right canvas {
+    display: block;
+    margin: 0 auto;
+    opacity: 1;
+}
+
+#canvas{
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+}
+
+.front, .back {
+    position: relative;
+}
+
+.front span,
+.back span {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    border-radius: 50%;
+    border: 1px solid dodgerblue;
+    background: lightskyblue;
+    z-index: 99;
+    box-sizing: content-box;
+    opacity: .5;
+    text-align: center;
+    font-size: 22px;
+    display: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+

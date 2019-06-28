@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1">
+    <title>身份证-照片转A4</title>
+    <link href="res/css/reset.css" rel="stylesheet" type="text/css">
+    <link href="res/css/index.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="left">
+    <h2>工具栏</h2>
+    <p>先选择照片，再依次对照片进行裁剪</p>
+    <ul>
+        <li>
+            <label>身份证国徽面：</label>
+            <input id="front" type="file" accept="image/*" name="front">
+        </li>
+        <li>
+            <label>控制点大小：</label>
+            <input type="number" value="80" name="size1" placeholder="">
+            <span>px</span>
+        </li>
+        <li class="pos">
+            <label>控制点1位置：</label>
+            <input type="number" value="75" name="pos1X" placeholder=""><span>,</span>
+            <input type="number" value="136" name="pos1Y" placeholder="">
+        </li>
+        <li class="pos">
+            <label>控制点2位置：</label>
+            <input type="number" value="89" name="pos2X" placeholder=""><span>,</span>
+            <input type="number" value="783" name="pos2Y" placeholder="">
+        </li>
+        <li class="pos">
+            <label>控制点3位置：</label>
+            <input type="number" value="1115" name="pos3X" placeholder=""><span>,</span>
+            <input type="number" value="135" name="pos3Y" placeholder="">
+        </li>
+        <li class="pos">
+            <label>控制点4位置：</label>
+            <input type="number" value="1118" name="pos4X" placeholder=""><span>,</span>
+            <input type="number" value="740" name="pos4Y" placeholder="">
+        </li>
+        <li>
+            <label>&nbsp;</label>
+            <button id="complete1">控制点调整完成</button>
+        </li>
+        <li>&nbsp;</li>
+        <li>
+            <label>身份证人像面：</label>
+            <input id="back" type="file" accept="image/*" name="back">
+        </li>
+        <li>
+            <label>控制点大小：</label>
+            <input type="number" value="80" name="size2" placeholder="">
+            <span>px</span>
+        </li>
+        <li class="pos">
+            <label>控制点1位置：</label>
+            <input type="number" value="75" name="pos5X" placeholder=""><span>,</span>
+            <input type="number" value="136" name="pos5Y" placeholder="">
+        </li>
+        <li class="pos">
+            <label>控制点2位置：</label>
+            <input type="number" value="89" name="pos6X" placeholder=""><span>,</span>
+            <input type="number" value="783" name="pos6Y" placeholder="">
+        </li>
+        <li class="pos">
+            <label>控制点3位置：</label>
+            <input type="number" value="1115" name="pos7X" placeholder=""><span>,</span>
+            <input type="number" value="135" name="pos7Y" placeholder="">
+        </li>
+        <li class="pos">
+            <label>控制点4位置：</label>
+            <input type="number" value="1118" name="pos8X" placeholder=""><span>,</span>
+            <input type="number" value="740" name="pos8Y" placeholder="">
+        </li>
+        <li>
+            <label>&nbsp;</label>
+            <button id="complete2">控制点调整完成</button>
+        </li>
+        <li>&nbsp;</li>
+        <li title="格式为: png / jpeg(默认)">
+            <label>保存图片格式：</label>
+            <input type="text" placeholder="jpeg" name="format">
+        </li>
+        <li>
+            <label>&nbsp;</label>
+            <button id="save">保存</button>
+        </li>
+    </ul>
+</div>
+<div class="right">
+    <div class="front">
+        <canvas id="frontCanvas" width="1240"></canvas>
+        <span data-sub="0" style="left: 75px; top: 136px;">1</span>
+        <span data-sub="1" style="left: 89px; top: 783px;">2</span>
+        <span data-sub="2" style="left: 1115px; top: 135px;">3</span>
+        <span data-sub="3" style="left: 1118px; top: 740px;">4</span>
+    </div>
+    <div class="back">
+        <canvas id="backCanvas" width="1240"></canvas>
+        <span data-sub="0" style="left: 75px; top: 136px;">1</span>
+        <span data-sub="1" style="left: 89px; top: 783px;">2</span>
+        <span data-sub="2" style="left: 1115px; top: 135px;">3</span>
+        <span data-sub="3" style="left: 1118px; top: 740px;">4</span>
+    </div>
+    <canvas id="canvas" width="1240" height="1754"></canvas>
+</div>
+
+<script src="res/js/jquery-1.8.3.min.js"></script>
+<script src="res/js/index.js"></script>
+</body>
+</html>

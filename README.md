@@ -19,7 +19,8 @@
 	[matrix.html --- 矩阵变换(包括求逆矩阵)](https://erdayo.github.io/otherDemo/canvas_demo/matrix.html)   
 	[watermark.html --- 图片添加水印](https://erdayo.github.io/otherDemo/canvas_demo/watermark.html)  
 	[colorSpot.html --- 辨色](https://erdayo.github.io/otherDemo/canvas_demo/colorSpot.html)   
-	[hannoTower.html --- 汉诺塔](https://erdayo.github.io/otherDemo/canvas_demo/hannoTower.html)
+	[hannoTower.html --- 汉诺塔](https://erdayo.github.io/otherDemo/canvas_demo/hannoTower.html)  
+	[IDCard --- 身份证-照片转A4纸展示](https://erdayo.github.io/otherDemo/canvas_demo/IDCard)
 	
 - css3_demo	  
 	[rasterized --- 栅格化](https://erdayo.github.io/otherDemo/css3_demo/rasterized/index.html)  

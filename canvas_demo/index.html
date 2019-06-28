@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>watermark</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    .sidebar {
+        position: fixed;
+        left: 10px;
+        top: 10px;
+        width: 320px;
+    }
+
+    .sidebar p {
+        line-height: 40px;
+    }
+
+    .sidebar label {
+        display: inline-block;
+        width: 120px;
+        text-align: right;
+        vertical-align: middle;
+    }
+
+    .sidebar input {
+        display: inline-block;
+        margin-left: 5px;
+        vertical-align: middle;
+    }
+
+    .sidebar input[type=text], .sidebar input[type=number] {
+        width: 163px;
+        height: 22px;
+        line-height: 22px;
+        padding-left: 10px;
+    }
+
+    .sidebar input[type=file] {
+        width: 163px;
+        height: 22px;
+        line-height: 22px;
+    }
+
+    canvas {
+        position: absolute;
+        left: 320px;
+        top: 10px;
+        box-shadow: 0 0 3px black;
+    }
+
+    button {
+        margin-left: 125px;
+        width: 100px;
+        height: 30px;
+    }
+
+</style>
+<body>
+<div id="setProp" class="sidebar">
+    <p><label>文件: </label> <input id="upload" type="file" accept="image/*"></p>
+    <p><label>水印文字: </label><input type="text" placeholder="" value="测试水印" name="txt"></p>
+    <p><label>水印文字大小: </label><input type="number" value="200" placeholder="" name="size"></p>
+    <p><label>水印旋转角度: </label><input type="number" value="30" placeholder="" name="rotate"></p>
+    <!--<p><label>水印模糊半径: </label><input type="number" value="30" placeholder="" name="radius"></p>-->
+    <p><label>水印水平位置: </label><input type="number" value="200" placeholder="" name="x"></p>
+    <p><label>水印垂直位置: </label><input type="number" value="200" placeholder="" name="y"></p>
+    <p><label>是否水平重复: </label><input type="checkbox" name="repeatX"></p>
+    <p><label>是否垂直重复: </label><input type="checkbox" name="repeatY"></p>
+    <p><label>水印水平间距: </label><input type="number" value="500" placeholder="" name="spaceX"></p>
+    <p><label>水印垂直间距: </label><input type="number" value="500" placeholder="" name="spaceY"></p>
+    <p><label>保存图片格式: </label><input type="text" value="" placeholder="格式为: png / jpeg(默认)" name="format"></p>
+    <button>保存</button>
+</div>
+
+<canvas id="canvas"></canvas>
+
+<script>
+    function Watermark() {
+        this.baseProp = {
+            maxWidth: 1200,             // 限制图片最大宽度
+            imgSrc: 'images/3.jpg',     // 图片来源
+            imgW: 0,                    // 图片宽度(自动计算)
+            imgH: 0,                    // 图片高度(自动计算)
+            txt: '测试水印',             // 水印文字
+            size: 50,                   // 文字大小
+            rotate: 30,                 // 文字旋转角度
+            radius: 30,                 // 模糊半径 -_-!! 目前无效果
+            x: 200,                     // 水印水平位置
+            y: 200,                     // 水印垂直位置
+            repeatY: false,            // 是否重复
+            repeatX: false,            // 是否重复
+            spaceY: 500,                 // 水印间隔距离
+            spaceX: 500,                 // 水印间隔距离
+            format: 'jpeg',             // 输出格式
+            fileName: '3'               // 文件名(根据原图名称自动获取)
+        };
+
+        this.canvas = document.getElementById('canvas');
+        this.ctx = this.canvas.getContext('2d');
+
+        this.init();
+    }
+
+    Watermark.prototype = {
+        /**
+         * 初始化并input绑定事件
+         */
+        init: function () {
+            var setObj = document.getElementById('setProp'),
+                self = this;
+            Array.prototype.forEach.call(setObj.children, function (obj) {
+                if (obj.tagName.toLowerCase() == 'button') {
+                    obj.onclick = function () {
+                        self.saveImg();
+                    }
+                } else {
+                    var curIn = obj.children[1];
+                    curIn.onchange = function () {
+                        self.changeProp(this);
+                    };
+                }
+            });
+            this.drawImg();
+        },
+
+        /**
+         * 修改属性
+         */
+        changeProp: function (curIn) {
+            var self = this,
+                curAttr = curIn.getAttribute('type');
+            switch (curAttr) {
+                case  'file':
+                    if (curIn.files[0] != undefined) {
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            self.baseProp.imgSrc = e.target.result;
+                            self.drawImg();
+                        };
+                        reader.readAsDataURL(curIn.files[0]);
+                        self.baseProp.fileName = curIn.files[0].name.split('.')[0];
+                    }
+                    break;
+                case 'text':
+                    self.baseProp[curIn.name] = curIn.value;
+                    self.drawImg();
+                    break;
+                case 'number':
+                    self.baseProp[curIn.name] = curIn.value;
+                    self.drawImg();
+                    break;
+                case 'checkbox':
+                    self.baseProp[curIn.name] = curIn.checked;
+                    self.drawImg();
+                    break;
+                default:
+                    break;
+            }
+        },
+
+        /**
+         * 清空画布并绘制图片
+         */
+        drawImg: function () {
+            var img = new Image(),
+                self = this;
+            img.src = this.baseProp.imgSrc;
+            img.onload = function () {
+                img.naturalWidth >= self.baseProp.maxWidth ? (self.baseProp.imgW = self.baseProp.maxWidth, self.baseProp.imgH = (img.naturalHeight * self.baseProp.maxWidth) / img.naturalWidth) : (self.baseProp.imgW = img.naturalWidth, self.baseProp.imgH = img.naturalHeight);
+                self.canvas.width = self.baseProp.imgW;
+                self.canvas.height = self.baseProp.imgH;
+                self.ctx.clearRect(0, 0, self.baseProp.imgW, self.baseProp.imgH);
+                self.ctx.drawImage(img, 0, 0, self.baseProp.imgW, self.baseProp.imgH);
+                self.drawText();
+            };
+        },
+
+        /**
+         * 水印
+         */
+        drawText: function () {
+            var curRotate = this.baseProp.rotate * Math.PI / 180,
+                maxRepeatY = 5,
+                maxRepeatX = 5,
+                i;
+            ~~(this.baseProp.imgH / this.baseProp.spaceY) <= maxRepeatY ? maxRepeatY = ~~(this.baseProp.imgH / this.baseProp.spaceY) : maxRepeatY;
+            ~~(this.baseProp.imgW / this.baseProp.spaceX) <= maxRepeatX ? maxRepeatX = ~~(this.baseProp.imgW / this.baseProp.spaceX) : maxRepeatX;
+
+
+            this.ctx.beginPath();
+            this.ctx.save();
+            this.ctx.setTransform(Math.cos(curRotate), -Math.sin(curRotate), Math.sin(curRotate), Math.cos(curRotate), this.baseProp.x, this.baseProp.y);
+            this.ctx.strokeStyle = 'rgba(0,0,0,.15)';
+            this.ctx.lineWidth = 2;
+            this.ctx.font = 'bold ' + this.baseProp.size + 'px Microsoft YaHei';
+            this.ctx.shadowBlur = this.baseProp.radius;
+            this.ctx.shadowColor = 'rgba(0,0,0,.8)';
+
+            if (this.baseProp.repeatY && !this.baseProp.repeatX) {
+                for (i = 0; i <= maxRepeatY; i++) {
+                    this.ctx.strokeText(this.baseProp.txt, ~~(-this.baseProp.spaceY * Math.sin(curRotate)) * i, ~~(this.baseProp.spaceY * Math.cos(curRotate)) * i);
+                }
+            }
+            else if (this.baseProp.repeatX && !this.baseProp.repeatY) {
+                for (i = 0; i <= maxRepeatX; i++) {
+                    this.ctx.strokeText(this.baseProp.txt, ~~(this.baseProp.spaceX * Math.cos(curRotate)) * i, ~~(this.baseProp.spaceX * Math.sin(curRotate)) * i);
+                }
+            } else if (this.baseProp.repeatX && this.baseProp.repeatY) {
+                for (i = 0; i <= maxRepeatX; i++) {
+                    var curX = ~~(this.baseProp.spaceX * Math.cos(curRotate)) * i;
+                    var curY = ~~(this.baseProp.spaceX * Math.sin(curRotate)) * i;
+                    for (var j = 0; j <= maxRepeatY; j++) {
+                        this.ctx.strokeText(this.baseProp.txt, curX + ~~(-this.baseProp.spaceY * Math.sin(curRotate)) * j, curY + ~~(this.baseProp.spaceY * Math.cos(curRotate)) * j);
+                    }
+                }
+            }else {
+                this.ctx.strokeText(this.baseProp.txt, 0, 0);
+            }
+
+            this.ctx.closePath();
+        },
+
+        /**
+         * 保存图片到本地
+         */
+        saveImg: function () {
+            var newFileName = this.baseProp.fileName + '_' + new Date().getTime() + '.' + this.baseProp.format,
+                img = document.getElementById('canvas').toDataURL('image/' + this.baseProp.format).replace("image/" + this.baseProp.format, "image/octet-stream;");
+            var savaFile = function (data, filename) {
+                var save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
+                save_link.href = data;
+                save_link.download = filename;
+                var event = document.createEvent('MouseEvents');
+                event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+                save_link.dispatchEvent(event);
+            };
+            savaFile(img, newFileName);
+        }
+    };
+
+
+    var wm = new Watermark();
+
+</script>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?3411bec7c9245fcf6a389b700683ba3f";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</body>
+</html>
